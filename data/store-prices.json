@@ -1,0 +1,572 @@
+{
+  "stores": [
+    {
+      "storeId": "STORE001",
+      "storeName": "TechMart",
+      "storeUrl": "https://techmart-mock.local",
+      "country": "IT",
+      "currency": "EUR",
+      "lastUpdate": "2026-04-10T15:30:00Z",
+      "prices": [
+        {
+          "productId": "PROD001",
+          "productName": "Laptop Dell XPS 13",
+          "price": 1299.99,
+          "discount": 0,
+          "finalPrice": 1299.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.7,
+          "reviews": 245
+        },
+        {
+          "productId": "PROD002",
+          "productName": "iPhone 15 Pro Max",
+          "price": 1199.99,
+          "discount": 5,
+          "finalPrice": 1139.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.8,
+          "reviews": 512
+        },
+        {
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "price": 379.99,
+          "discount": 0,
+          "finalPrice": 379.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.6,
+          "reviews": 789
+        },
+        {
+          "productId": "PROD004",
+          "productName": "Samsung 55\" QLED TV",
+          "price": 849.99,
+          "discount": 10,
+          "finalPrice": 764.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-5 giorni",
+          "rating": 4.5,
+          "reviews": 156
+        },
+        {
+          "productId": "PROD005",
+          "productName": "MacBook Air M3",
+          "price": 1199.00,
+          "discount": 0,
+          "finalPrice": 1199.00,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.9,
+          "reviews": 334
+        },
+        {
+          "productId": "PROD006",
+          "productName": "PlayStation 5",
+          "price": 499.99,
+          "discount": 0,
+          "finalPrice": 499.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.7,
+          "reviews": 1023
+        },
+        {
+          "productId": "PROD007",
+          "productName": "iPad Pro 12.9\" M2",
+          "price": 1099.00,
+          "discount": 0,
+          "finalPrice": 1099.00,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.8,
+          "reviews": 267
+        },
+        {
+          "productId": "PROD008",
+          "productName": "Canon EOS R5 Mark II",
+          "price": 4499.99,
+          "discount": 0,
+          "finalPrice": 4499.99,
+          "availability": "limited_stock",
+          "estimatedDelivery": "5-7 giorni",
+          "rating": 4.9,
+          "reviews": 89
+        },
+        {
+          "productId": "PROD009",
+          "productName": "DJI Air 3S Drone",
+          "price": 749.99,
+          "discount": 8,
+          "finalPrice": 689.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.6,
+          "reviews": 345
+        },
+        {
+          "productId": "PROD010",
+          "productName": "Mechanical Gaming Keyboard RGB",
+          "price": 159.99,
+          "discount": 15,
+          "finalPrice": 135.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.4,
+          "reviews": 567
+        },
+        {
+          "productId": "PROD011",
+          "productName": "Logitech MX Master 3S Mouse",
+          "price": 99.99,
+          "discount": 0,
+          "finalPrice": 99.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.8,
+          "reviews": 892
+        },
+        {
+          "productId": "PROD012",
+          "productName": "SSD Samsung 870 EVO 1TB",
+          "price": 89.99,
+          "discount": 5,
+          "finalPrice": 85.49,
+          "availability": "in_stock",
+          "estimatedDelivery": "1 giorno",
+          "rating": 4.7,
+          "reviews": 445
+        }
+      ]
+    },
+    {
+      "storeId": "STORE002",
+      "storeName": "ElectroWorld",
+      "storeUrl": "https://electroworld-mock.local",
+      "country": "IT",
+      "currency": "EUR",
+      "lastUpdate": "2026-04-10T15:25:00Z",
+      "prices": [
+        {
+          "productId": "PROD001",
+          "productName": "Laptop Dell XPS 13",
+          "price": 1349.99,
+          "discount": 8,
+          "finalPrice": 1241.59,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.6,
+          "reviews": 198
+        },
+        {
+          "productId": "PROD002",
+          "productName": "iPhone 15 Pro Max",
+          "price": 1229.99,
+          "discount": 3,
+          "finalPrice": 1192.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.7,
+          "reviews": 478
+        },
+        {
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "price": 399.99,
+          "discount": 5,
+          "finalPrice": 379.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.5,
+          "reviews": 623
+        },
+        {
+          "productId": "PROD004",
+          "productName": "Samsung 55\" QLED TV",
+          "price": 899.99,
+          "discount": 15,
+          "finalPrice": 764.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "4-6 giorni",
+          "rating": 4.4,
+          "reviews": 134
+        },
+        {
+          "productId": "PROD005",
+          "productName": "MacBook Air M3",
+          "price": 1249.00,
+          "discount": 5,
+          "finalPrice": 1186.55,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.8,
+          "reviews": 291
+        },
+        {
+          "productId": "PROD006",
+          "productName": "PlayStation 5",
+          "price": 549.99,
+          "discount": 5,
+          "finalPrice": 522.49,
+          "availability": "low_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.6,
+          "reviews": 912
+        },
+        {
+          "productId": "PROD007",
+          "productName": "iPad Pro 12.9\" M2",
+          "price": 1149.00,
+          "discount": 3,
+          "finalPrice": 1114.53,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.7,
+          "reviews": 234
+        },
+        {
+          "productId": "PROD008",
+          "productName": "Canon EOS R5 Mark II",
+          "price": 4699.99,
+          "discount": 0,
+          "finalPrice": 4699.99,
+          "availability": "on_order",
+          "estimatedDelivery": "10-15 giorni",
+          "rating": 4.8,
+          "reviews": 76
+        },
+        {
+          "productId": "PROD009",
+          "productName": "DJI Air 3S Drone",
+          "price": 799.99,
+          "discount": 5,
+          "finalPrice": 759.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.5,
+          "reviews": 312
+        },
+        {
+          "productId": "PROD010",
+          "productName": "Mechanical Gaming Keyboard RGB",
+          "price": 169.99,
+          "discount": 10,
+          "finalPrice": 152.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.3,
+          "reviews": 489
+        },
+        {
+          "productId": "PROD011",
+          "productName": "Logitech MX Master 3S Mouse",
+          "price": 109.99,
+          "discount": 5,
+          "finalPrice": 104.49,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.7,
+          "reviews": 756
+        },
+        {
+          "productId": "PROD012",
+          "productName": "SSD Samsung 870 EVO 1TB",
+          "price": 94.99,
+          "discount": 0,
+          "finalPrice": 94.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2 giorni",
+          "rating": 4.6,
+          "reviews": 378
+        }
+      ]
+    },
+    {
+      "storeId": "STORE003",
+      "storeName": "DigitalHub",
+      "storeUrl": "https://digitalhub-mock.local",
+      "country": "IT",
+      "currency": "EUR",
+      "lastUpdate": "2026-04-10T15:20:00Z",
+      "prices": [
+        {
+          "productId": "PROD001",
+          "productName": "Laptop Dell XPS 13",
+          "price": 1279.99,
+          "discount": 3,
+          "finalPrice": 1241.59,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.8,
+          "reviews": 312
+        },
+        {
+          "productId": "PROD002",
+          "productName": "iPhone 15 Pro Max",
+          "price": 1179.99,
+          "discount": 0,
+          "finalPrice": 1179.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.9,
+          "reviews": 534
+        },
+        {
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "price": 369.99,
+          "discount": 10,
+          "finalPrice": 332.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.7,
+          "reviews": 834
+        },
+        {
+          "productId": "PROD004",
+          "productName": "Samsung 55\" QLED TV",
+          "price": 829.99,
+          "discount": 12,
+          "finalPrice": 729.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-5 giorni",
+          "rating": 4.6,
+          "reviews": 178
+        },
+        {
+          "productId": "PROD005",
+          "productName": "MacBook Air M3",
+          "price": 1219.00,
+          "discount": 0,
+          "finalPrice": 1219.00,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.9,
+          "reviews": 356
+        },
+        {
+          "productId": "PROD006",
+          "productName": "PlayStation 5",
+          "price": 509.99,
+          "discount": 3,
+          "finalPrice": 494.69,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.8,
+          "reviews": 1089
+        },
+        {
+          "productId": "PROD007",
+          "productName": "iPad Pro 12.9\" M2",
+          "price": 1119.00,
+          "discount": 2,
+          "finalPrice": 1096.62,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.9,
+          "reviews": 289
+        },
+        {
+          "productId": "PROD008",
+          "productName": "Canon EOS R5 Mark II",
+          "price": 4549.99,
+          "discount": 5,
+          "finalPrice": 4322.49,
+          "availability": "limited_stock",
+          "estimatedDelivery": "4-6 giorni",
+          "rating": 4.9,
+          "reviews": 92
+        },
+        {
+          "productId": "PROD009",
+          "productName": "DJI Air 3S Drone",
+          "price": 729.99,
+          "discount": 10,
+          "finalPrice": 656.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.7,
+          "reviews": 367
+        },
+        {
+          "productId": "PROD010",
+          "productName": "Mechanical Gaming Keyboard RGB",
+          "price": 149.99,
+          "discount": 20,
+          "finalPrice": 119.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.5,
+          "reviews": 612
+        },
+        {
+          "productId": "PROD011",
+          "productName": "Logitech MX Master 3S Mouse",
+          "price": 94.99,
+          "discount": 5,
+          "finalPrice": 90.24,
+          "availability": "in_stock",
+          "estimatedDelivery": "1-2 giorni",
+          "rating": 4.9,
+          "reviews": 934
+        },
+        {
+          "productId": "PROD012",
+          "productName": "SSD Samsung 870 EVO 1TB",
+          "price": 84.99,
+          "discount": 10,
+          "finalPrice": 76.49,
+          "availability": "in_stock",
+          "estimatedDelivery": "1 giorno",
+          "rating": 4.8,
+          "reviews": 523
+        }
+      ]
+    },
+    {
+      "storeId": "STORE004",
+      "storeName": "MegaStore",
+      "storeUrl": "https://megastore-mock.local",
+      "country": "IT",
+      "currency": "EUR",
+      "lastUpdate": "2026-04-10T15:15:00Z",
+      "prices": [
+        {
+          "productId": "PROD001",
+          "productName": "Laptop Dell XPS 13",
+          "price": 1329.99,
+          "discount": 5,
+          "finalPrice": 1263.49,
+          "availability": "in_stock",
+          "estimatedDelivery": "4-5 giorni",
+          "rating": 4.5,
+          "reviews": 167
+        },
+        {
+          "productId": "PROD002",
+          "productName": "iPhone 15 Pro Max",
+          "price": 1209.99,
+          "discount": 4,
+          "finalPrice": 1161.59,
+          "availability": "low_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.6,
+          "reviews": 401
+        },
+        {
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "price": 389.99,
+          "discount": 8,
+          "finalPrice": 358.79,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.4,
+          "reviews": 712
+        },
+        {
+          "productId": "PROD004",
+          "productName": "Samsung 55\" QLED TV",
+          "price": 879.99,
+          "discount": 18,
+          "finalPrice": 721.59,
+          "availability": "in_stock",
+          "estimatedDelivery": "5-7 giorni",
+          "rating": 4.3,
+          "reviews": 145
+        },
+        {
+          "productId": "PROD005",
+          "productName": "MacBook Air M3",
+          "price": 1239.00,
+          "discount": 3,
+          "finalPrice": 1201.83,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.7,
+          "reviews": 278
+        },
+        {
+          "productId": "PROD006",
+          "productName": "PlayStation 5",
+          "price": 519.99,
+          "discount": 0,
+          "finalPrice": 519.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "4-5 giorni",
+          "rating": 4.5,
+          "reviews": 1045
+        },
+        {
+          "productId": "PROD007",
+          "productName": "iPad Pro 12.9\" M2",
+          "price": 1139.00,
+          "discount": 0,
+          "finalPrice": 1139.00,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.6,
+          "reviews": 243
+        },
+        {
+          "productId": "PROD008",
+          "productName": "Canon EOS R5 Mark II",
+          "price": 4599.99,
+          "discount": 0,
+          "finalPrice": 4599.99,
+          "availability": "limited_stock",
+          "estimatedDelivery": "6-8 giorni",
+          "rating": 4.7,
+          "reviews": 81
+        },
+        {
+          "productId": "PROD009",
+          "productName": "DJI Air 3S Drone",
+          "price": 789.99,
+          "discount": 0,
+          "finalPrice": 789.99,
+          "availability": "in_stock",
+          "estimatedDelivery": "3-4 giorni",
+          "rating": 4.4,
+          "reviews": 298
+        },
+        {
+          "productId": "PROD010",
+          "productName": "Mechanical Gaming Keyboard RGB",
+          "price": 159.99,
+          "discount": 12,
+          "finalPrice": 140.79,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.2,
+          "reviews": 534
+        },
+        {
+          "productId": "PROD011",
+          "productName": "Logitech MX Master 3S Mouse",
+          "price": 104.99,
+          "discount": 3,
+          "finalPrice": 101.84,
+          "availability": "in_stock",
+          "estimatedDelivery": "2-3 giorni",
+          "rating": 4.6,
+          "reviews": 823
+        },
+        {
+          "productId": "PROD012",
+          "productName": "SSD Samsung 870 EVO 1TB",
+          "price": 92.99,
+          "discount": 8,
+          "finalPrice": 85.55,
+          "availability": "in_stock",
+          "estimatedDelivery": "2 giorni",
+          "rating": 4.5,
+          "reviews": 401
+        }
+      ]
+    }
+  ]
+}

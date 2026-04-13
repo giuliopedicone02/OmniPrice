@@ -1,0 +1,628 @@
+{
+  "priceHistory": [
+    {
+      "productId": "PROD001",
+      "productName": "Laptop Dell XPS 13",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1349.99,
+          "discount": 0,
+          "finalPrice": 1349.99
+        },
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1399.99,
+          "discount": 5,
+          "finalPrice": 1329.99
+        },
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1329.99,
+          "discount": 0,
+          "finalPrice": 1329.99
+        },
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE004",
+          "storeName": "MegaStore",
+          "price": 1379.99,
+          "discount": 3,
+          "finalPrice": 1338.69
+        },
+        {
+          "date": "2026-03-15",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1329.99,
+          "discount": 0,
+          "finalPrice": 1329.99
+        },
+        {
+          "date": "2026-03-15",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1399.99,
+          "discount": 8,
+          "finalPrice": 1287.99
+        },
+        {
+          "date": "2026-03-18",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1319.99,
+          "discount": 2,
+          "finalPrice": 1293.59
+        },
+        {
+          "date": "2026-03-21",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1349.99,
+          "discount": 8,
+          "finalPrice": 1241.59
+        },
+        {
+          "date": "2026-03-25",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1299.99,
+          "discount": 0,
+          "finalPrice": 1299.99
+        },
+        {
+          "date": "2026-03-28",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1299.99,
+          "discount": 0,
+          "finalPrice": 1299.99
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1349.99,
+          "discount": 8,
+          "finalPrice": 1241.59
+        },
+        {
+          "date": "2026-04-05",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1279.99,
+          "discount": 3,
+          "finalPrice": 1241.59
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1299.99,
+          "discount": 0,
+          "finalPrice": 1299.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD002",
+      "productName": "iPhone 15 Pro Max",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1249.99,
+          "discount": 0,
+          "finalPrice": 1249.99
+        },
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1279.99,
+          "discount": 0,
+          "finalPrice": 1279.99
+        },
+        {
+          "date": "2026-03-15",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1229.99,
+          "discount": 8,
+          "finalPrice": 1131.59
+        },
+        {
+          "date": "2026-03-18",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1249.99,
+          "discount": 3,
+          "finalPrice": 1212.49
+        },
+        {
+          "date": "2026-03-22",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1249.99,
+          "discount": 5,
+          "finalPrice": 1187.49
+        },
+        {
+          "date": "2026-03-28",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1199.99,
+          "discount": 5,
+          "finalPrice": 1139.99
+        },
+        {
+          "date": "2026-04-02",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1189.99,
+          "discount": 2,
+          "finalPrice": 1166.19
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1199.99,
+          "discount": 5,
+          "finalPrice": 1139.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD003",
+      "productName": "Sony WH-1000XM5 Headphones",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 399.99,
+          "discount": 0,
+          "finalPrice": 399.99
+        },
+        {
+          "date": "2026-03-15",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 399.99,
+          "discount": 5,
+          "finalPrice": 379.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 419.99,
+          "discount": 10,
+          "finalPrice": 377.99
+        },
+        {
+          "date": "2026-03-25",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 389.99,
+          "discount": 0,
+          "finalPrice": 389.99
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 369.99,
+          "discount": 10,
+          "finalPrice": 332.99
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 379.99,
+          "discount": 0,
+          "finalPrice": 379.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD004",
+      "productName": "Samsung 55\" QLED TV",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 999.99,
+          "discount": 0,
+          "finalPrice": 999.99
+        },
+        {
+          "date": "2026-03-18",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 949.99,
+          "discount": 10,
+          "finalPrice": 854.99
+        },
+        {
+          "date": "2026-03-25",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 929.99,
+          "discount": 15,
+          "finalPrice": 789.99
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 899.99,
+          "discount": 5,
+          "finalPrice": 854.99
+        },
+        {
+          "date": "2026-04-05",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 899.99,
+          "discount": 15,
+          "finalPrice": 764.99
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 849.99,
+          "discount": 10,
+          "finalPrice": 764.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD005",
+      "productName": "MacBook Air M3",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1299.00,
+          "discount": 0,
+          "finalPrice": 1299.00
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1299.00,
+          "discount": 3,
+          "finalPrice": 1260.03
+        },
+        {
+          "date": "2026-03-28",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1279.00,
+          "discount": 0,
+          "finalPrice": 1279.00
+        },
+        {
+          "date": "2026-04-05",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1229.00,
+          "discount": 2,
+          "finalPrice": 1204.42
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1199.00,
+          "discount": 0,
+          "finalPrice": 1199.00
+        }
+      ]
+    },
+    {
+      "productId": "PROD006",
+      "productName": "PlayStation 5",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 529.99,
+          "discount": 0,
+          "finalPrice": 529.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 549.99,
+          "discount": 8,
+          "finalPrice": 505.59
+        },
+        {
+          "date": "2026-03-28",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 519.99,
+          "discount": 3,
+          "finalPrice": 504.19
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 509.99,
+          "discount": 2,
+          "finalPrice": 499.79
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 499.99,
+          "discount": 0,
+          "finalPrice": 499.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD007",
+      "productName": "iPad Pro 12.9\" M2",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1199.00,
+          "discount": 0,
+          "finalPrice": 1199.00
+        },
+        {
+          "date": "2026-03-18",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 1189.00,
+          "discount": 5,
+          "finalPrice": 1129.55
+        },
+        {
+          "date": "2026-03-25",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 1169.00,
+          "discount": 2,
+          "finalPrice": 1145.62
+        },
+        {
+          "date": "2026-04-05",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1119.00,
+          "discount": 0,
+          "finalPrice": 1119.00
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 1099.00,
+          "discount": 0,
+          "finalPrice": 1099.00
+        }
+      ]
+    },
+    {
+      "productId": "PROD008",
+      "productName": "Canon EOS R5 Mark II",
+      "records": [
+        {
+          "date": "2026-03-15",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 4799.99,
+          "discount": 0,
+          "finalPrice": 4799.99
+        },
+        {
+          "date": "2026-03-25",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 4699.99,
+          "discount": 8,
+          "finalPrice": 4323.59
+        },
+        {
+          "date": "2026-04-02",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 4699.99,
+          "discount": 0,
+          "finalPrice": 4699.99
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 4499.99,
+          "discount": 0,
+          "finalPrice": 4499.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD009",
+      "productName": "DJI Air 3S Drone",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 849.99,
+          "discount": 0,
+          "finalPrice": 849.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 829.99,
+          "discount": 8,
+          "finalPrice": 763.19
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 799.99,
+          "discount": 5,
+          "finalPrice": 759.99
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 749.99,
+          "discount": 8,
+          "finalPrice": 689.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD010",
+      "productName": "Mechanical Gaming Keyboard RGB",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 189.99,
+          "discount": 0,
+          "finalPrice": 189.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 179.99,
+          "discount": 10,
+          "finalPrice": 161.99
+        },
+        {
+          "date": "2026-03-28",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 179.99,
+          "discount": 15,
+          "finalPrice": 152.99
+        },
+        {
+          "date": "2026-04-05",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 159.99,
+          "discount": 15,
+          "finalPrice": 135.99
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 159.99,
+          "discount": 15,
+          "finalPrice": 135.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD011",
+      "productName": "Logitech MX Master 3S Mouse",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 119.99,
+          "discount": 0,
+          "finalPrice": 119.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 119.99,
+          "discount": 5,
+          "finalPrice": 113.99
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 109.99,
+          "discount": 5,
+          "finalPrice": 104.49
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 99.99,
+          "discount": 0,
+          "finalPrice": 99.99
+        }
+      ]
+    },
+    {
+      "productId": "PROD012",
+      "productName": "SSD Samsung 870 EVO 1TB",
+      "records": [
+        {
+          "date": "2026-03-12",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 109.99,
+          "discount": 0,
+          "finalPrice": 109.99
+        },
+        {
+          "date": "2026-03-20",
+          "storeId": "STORE002",
+          "storeName": "ElectroWorld",
+          "price": 104.99,
+          "discount": 5,
+          "finalPrice": 99.74
+        },
+        {
+          "date": "2026-04-01",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "price": 94.99,
+          "discount": 5,
+          "finalPrice": 90.24
+        },
+        {
+          "date": "2026-04-10",
+          "storeId": "STORE001",
+          "storeName": "TechMart",
+          "price": 89.99,
+          "discount": 5,
+          "finalPrice": 85.49
+        }
+      ]
+    }
+  ]
+}

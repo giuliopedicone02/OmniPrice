@@ -1,0 +1,381 @@
+{
+  "users": [
+    {
+      "userId": "USR001",
+      "username": "mario.rossi",
+      "email": "mario.rossi@example.com",
+      "passwordHash": "$2b$12$r9h5cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+      "firstName": "Mario",
+      "lastName": "Rossi",
+      "role": "Standard",
+      "registrationDate": "2025-06-15T10:30:00Z",
+      "lastLogin": "2026-04-10T14:22:00Z",
+      "preferences": {
+        "currency": "EUR",
+        "country": "IT",
+        "language": "it-IT",
+        "notifications": {
+          "emailAlerts": true,
+          "pushNotifications": false,
+          "priceDropThreshold": 10
+        },
+        "favoriteStores": ["STORE001", "STORE003"],
+        "displayOptions": {
+          "itemsPerPage": 10,
+          "theme": "light"
+        }
+      },
+      "watchlist": [
+        "PROD001",
+        "PROD002",
+        "PROD005",
+        "PROD010"
+      ],
+      "priceAlerts": [
+        {
+          "alertId": "ALERT001",
+          "productId": "PROD001",
+          "productName": "Laptop Dell XPS 13",
+          "targetPrice": 1250.00,
+          "createdDate": "2026-03-25T09:15:00Z",
+          "status": "active",
+          "notificationsSent": 0,
+          "stores": ["STORE001", "STORE002", "STORE003"]
+        },
+        {
+          "alertId": "ALERT002",
+          "productId": "PROD002",
+          "productName": "iPhone 15 Pro Max",
+          "targetPrice": 1100.00,
+          "createdDate": "2026-04-01T16:45:00Z",
+          "status": "active",
+          "notificationsSent": 2,
+          "stores": ["STORE001", "STORE003"]
+        },
+        {
+          "alertId": "ALERT003",
+          "productId": "PROD005",
+          "productName": "MacBook Air M3",
+          "targetPrice": 1150.00,
+          "createdDate": "2026-04-05T11:20:00Z",
+          "status": "triggered",
+          "notificationsSent": 1,
+          "triggeredDate": "2026-04-05T14:30:00Z",
+          "stores": ["STORE001"]
+        }
+      ],
+      "searchHistory": [
+        {
+          "query": "laptop",
+          "timestamp": "2026-04-10T13:30:00Z",
+          "resultsCount": 5
+        },
+        {
+          "query": "gaming keyboard",
+          "timestamp": "2026-04-08T10:15:00Z",
+          "resultsCount": 3
+        },
+        {
+          "query": "iphone 15",
+          "timestamp": "2026-04-05T16:45:00Z",
+          "resultsCount": 2
+        }
+      ],
+      "purchaseHistory": []
+    },
+    {
+      "userId": "USR002",
+      "username": "laura.bianchi",
+      "email": "laura.bianchi@example.com",
+      "passwordHash": "$2b$12$x8k9lPqZ1wi.VRMMX4ll3NPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+      "firstName": "Laura",
+      "lastName": "Bianchi",
+      "role": "Premium",
+      "registrationDate": "2025-01-20T08:45:00Z",
+      "lastLogin": "2026-04-10T16:50:00Z",
+      "preferences": {
+        "currency": "EUR",
+        "country": "IT",
+        "language": "it-IT",
+        "notifications": {
+          "emailAlerts": true,
+          "pushNotifications": true,
+          "priceDropThreshold": 5
+        },
+        "favoriteStores": ["STORE002", "STORE003", "STORE004"],
+        "displayOptions": {
+          "itemsPerPage": 20,
+          "theme": "dark"
+        }
+      },
+      "watchlist": [
+        "PROD003",
+        "PROD004",
+        "PROD007",
+        "PROD008",
+        "PROD009"
+      ],
+      "priceAlerts": [
+        {
+          "alertId": "ALERT004",
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "targetPrice": 350.00,
+          "createdDate": "2026-03-10T13:20:00Z",
+          "status": "active",
+          "notificationsSent": 1,
+          "stores": ["STORE001", "STORE002", "STORE003", "STORE004"]
+        },
+        {
+          "alertId": "ALERT005",
+          "productId": "PROD004",
+          "productName": "Samsung 55\" QLED TV",
+          "targetPrice": 750.00,
+          "createdDate": "2026-03-20T15:30:00Z",
+          "status": "triggered",
+          "notificationsSent": 3,
+          "triggeredDate": "2026-04-05T09:00:00Z",
+          "stores": ["STORE001", "STORE002", "STORE003"]
+        },
+        {
+          "alertId": "ALERT006",
+          "productId": "PROD008",
+          "productName": "Canon EOS R5 Mark II",
+          "targetPrice": 4300.00,
+          "createdDate": "2026-04-02T10:10:00Z",
+          "status": "active",
+          "notificationsSent": 0,
+          "stores": ["STORE003"]
+        },
+        {
+          "alertId": "ALERT007",
+          "productId": "PROD009",
+          "productName": "DJI Air 3S Drone",
+          "targetPrice": 700.00,
+          "createdDate": "2026-04-06T14:45:00Z",
+          "status": "active",
+          "notificationsSent": 1,
+          "stores": ["STORE001", "STORE003"]
+        }
+      ],
+      "searchHistory": [
+        {
+          "query": "drone",
+          "timestamp": "2026-04-10T15:20:00Z",
+          "resultsCount": 4
+        },
+        {
+          "query": "fotocamera professionale",
+          "timestamp": "2026-04-08T12:30:00Z",
+          "resultsCount": 2
+        },
+        {
+          "query": "cuffie wireless premium",
+          "timestamp": "2026-04-05T09:45:00Z",
+          "resultsCount": 3
+        },
+        {
+          "query": "4k television",
+          "timestamp": "2026-04-02T17:15:00Z",
+          "resultsCount": 5
+        }
+      ],
+      "purchaseHistory": [
+        {
+          "purchaseId": "PUR001",
+          "productId": "PROD003",
+          "productName": "Sony WH-1000XM5 Headphones",
+          "storeId": "STORE003",
+          "storeName": "DigitalHub",
+          "purchaseDate": "2026-03-15T10:30:00Z",
+          "price": 332.99,
+          "currency": "EUR"
+        }
+      ]
+    },
+    {
+      "userId": "USR003",
+      "username": "giuseppe.neri",
+      "email": "giuseppe.neri@example.com",
+      "passwordHash": "$2b$12$q5m2bKzY9ui.WSOOP5mm4OPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+      "firstName": "Giuseppe",
+      "lastName": "Neri",
+      "role": "Admin",
+      "registrationDate": "2024-11-05T12:00:00Z",
+      "lastLogin": "2026-04-10T17:30:00Z",
+      "preferences": {
+        "currency": "EUR",
+        "country": "IT",
+        "language": "it-IT",
+        "notifications": {
+          "emailAlerts": true,
+          "pushNotifications": true,
+          "priceDropThreshold": 0
+        },
+        "favoriteStores": ["STORE001", "STORE002", "STORE003", "STORE004"],
+        "displayOptions": {
+          "itemsPerPage": 50,
+          "theme": "light"
+        }
+      },
+      "watchlist": [
+        "PROD001",
+        "PROD002",
+        "PROD003",
+        "PROD004",
+        "PROD005",
+        "PROD006",
+        "PROD007",
+        "PROD008",
+        "PROD009",
+        "PROD010",
+        "PROD011",
+        "PROD012"
+      ],
+      "priceAlerts": [
+        {
+          "alertId": "ALERT008",
+          "productId": "PROD006",
+          "productName": "PlayStation 5",
+          "targetPrice": 480.00,
+          "createdDate": "2026-03-15T08:00:00Z",
+          "status": "active",
+          "notificationsSent": 2,
+          "stores": ["STORE001", "STORE002", "STORE003", "STORE004"]
+        }
+      ],
+      "searchHistory": [
+        {
+          "query": "electronics",
+          "timestamp": "2026-04-10T17:00:00Z",
+          "resultsCount": 12
+        }
+      ],
+      "purchaseHistory": []
+    },
+    {
+      "userId": "USR004",
+      "username": "elena.russo",
+      "email": "elena.russo@example.com",
+      "passwordHash": "$2b$12$p7n3cLaX8vi.XTPPX6nn5OPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+      "firstName": "Elena",
+      "lastName": "Russo",
+      "role": "Standard",
+      "registrationDate": "2025-07-10T14:20:00Z",
+      "lastLogin": "2026-04-09T09:15:00Z",
+      "preferences": {
+        "currency": "EUR",
+        "country": "IT",
+        "language": "en-US",
+        "notifications": {
+          "emailAlerts": false,
+          "pushNotifications": true,
+          "priceDropThreshold": 15
+        },
+        "favoriteStores": ["STORE004"],
+        "displayOptions": {
+          "itemsPerPage": 15,
+          "theme": "dark"
+        }
+      },
+      "watchlist": [
+        "PROD010",
+        "PROD011",
+        "PROD012"
+      ],
+      "priceAlerts": [
+        {
+          "alertId": "ALERT009",
+          "productId": "PROD010",
+          "productName": "Mechanical Gaming Keyboard RGB",
+          "targetPrice": 130.00,
+          "createdDate": "2026-04-03T16:40:00Z",
+          "status": "triggered",
+          "notificationsSent": 1,
+          "triggeredDate": "2026-04-10T12:00:00Z",
+          "stores": ["STORE003"]
+        },
+        {
+          "alertId": "ALERT010",
+          "productId": "PROD011",
+          "productName": "Logitech MX Master 3S Mouse",
+          "targetPrice": 95.00,
+          "createdDate": "2026-04-05T11:50:00Z",
+          "status": "active",
+          "notificationsSent": 0,
+          "stores": ["STORE003"]
+        }
+      ],
+      "searchHistory": [
+        {
+          "query": "gaming peripherals",
+          "timestamp": "2026-04-09T08:30:00Z",
+          "resultsCount": 4
+        }
+      ],
+      "purchaseHistory": []
+    }
+  ],
+  "roles": [
+    {
+      "roleId": "ROLE001",
+      "roleName": "Standard",
+      "description": "Ruolo standard per utenti normali",
+      "permissions": [
+        "SEARCH_PRODUCTS",
+        "VIEW_PRICES",
+        "CREATE_ALERTS",
+        "VIEW_PRICE_HISTORY",
+        "VIEW_WATCHLIST",
+        "MANAGE_PROFILE"
+      ],
+      "maxAlerts": 5,
+      "alertNotificationFrequency": "daily",
+      "storeFavoriteLimit": 5
+    },
+    {
+      "roleId": "ROLE002",
+      "roleName": "Premium",
+      "description": "Ruolo premium con funzionalità avanzate",
+      "permissions": [
+        "SEARCH_PRODUCTS",
+        "VIEW_PRICES",
+        "CREATE_ALERTS",
+        "VIEW_PRICE_HISTORY",
+        "VIEW_WATCHLIST",
+        "MANAGE_PROFILE",
+        "EXPORT_DATA",
+        "ADVANCED_FILTERING",
+        "PRICE_PREDICTION",
+        "COMPARISON_TOOL"
+      ],
+      "maxAlerts": 25,
+      "alertNotificationFrequency": "real_time",
+      "storeFavoriteLimit": 10
+    },
+    {
+      "roleId": "ROLE003",
+      "roleName": "Admin",
+      "description": "Ruolo amministratore con accesso completo",
+      "permissions": [
+        "SEARCH_PRODUCTS",
+        "VIEW_PRICES",
+        "CREATE_ALERTS",
+        "VIEW_PRICE_HISTORY",
+        "VIEW_WATCHLIST",
+        "MANAGE_PROFILE",
+        "EXPORT_DATA",
+        "ADVANCED_FILTERING",
+        "PRICE_PREDICTION",
+        "COMPARISON_TOOL",
+        "MANAGE_USERS",
+        "MANAGE_STORES",
+        "VIEW_ANALYTICS",
+        "MANAGE_SYSTEM"
+      ],
+      "maxAlerts": null,
+      "alertNotificationFrequency": "real_time",
+      "storeFavoriteLimit": null
+    }
+  ]
+}

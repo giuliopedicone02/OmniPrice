@@ -1,0 +1,196 @@
+{
+  "products": [
+    {
+      "id": "PROD001",
+      "name": "Laptop Dell XPS 13",
+      "category": "Elettronica",
+      "subcategory": "Computer Portatili",
+      "description": "Ultrabook premium con processore Intel Core i7, 16GB RAM, 512GB SSD",
+      "specs": {
+        "processor": "Intel Core i7-1360P",
+        "ram": "16GB DDR5",
+        "storage": "512GB NVMe SSD",
+        "display": "13.4 FHD",
+        "weight": "1.2 kg"
+      },
+      "imageUrl": "https://example.com/laptop-dell-xps.jpg",
+      "releaseDate": "2024-01-15"
+    },
+    {
+      "id": "PROD002",
+      "name": "iPhone 15 Pro Max",
+      "category": "Elettronica",
+      "subcategory": "Smartphone",
+      "description": "Flagship smartphone Apple con chip A17 Pro, display OLED da 6.7 pollici",
+      "specs": {
+        "processor": "Apple A17 Pro",
+        "ram": "8GB",
+        "storage": "256GB",
+        "display": "6.7 OLED",
+        "camera": "48MP principale"
+      },
+      "imageUrl": "https://example.com/iphone15pro.jpg",
+      "releaseDate": "2023-09-22"
+    },
+    {
+      "id": "PROD003",
+      "name": "Sony WH-1000XM5 Headphones",
+      "category": "Elettronica",
+      "subcategory": "Audio",
+      "description": "Cuffie wireless premium con cancellazione attiva del rumore, autonomia 30 ore",
+      "specs": {
+        "type": "Over-ear",
+        "wireless": "Bluetooth 5.3",
+        "noiseCancel": "Active",
+        "batteryLife": "30 hours",
+        "weight": "250g"
+      },
+      "imageUrl": "https://example.com/sony-headphones.jpg",
+      "releaseDate": "2023-07-10"
+    },
+    {
+      "id": "PROD004",
+      "name": "Samsung 55\" QLED TV",
+      "category": "Elettronica",
+      "subcategory": "Televisori",
+      "description": "Smart TV QLED 4K con refresh rate 120Hz, gaming hub integrato",
+      "specs": {
+        "size": "55 pollici",
+        "resolution": "4K (3840x2160)",
+        "refreshRate": "120Hz",
+        "smartTV": "Tizen OS",
+        "hdmi": "HDMI 2.1"
+      },
+      "imageUrl": "https://example.com/samsung-tv.jpg",
+      "releaseDate": "2024-03-05"
+    },
+    {
+      "id": "PROD005",
+      "name": "MacBook Air M3",
+      "category": "Elettronica",
+      "subcategory": "Computer Portatili",
+      "description": "Laptop ultraleggero con chip Apple M3, SSD 512GB, display Retina",
+      "specs": {
+        "processor": "Apple M3",
+        "ram": "16GB Unified",
+        "storage": "512GB SSD",
+        "display": "13.6 Retina",
+        "weight": "1.24 kg"
+      },
+      "imageUrl": "https://example.com/macbook-air-m3.jpg",
+      "releaseDate": "2024-02-20"
+    },
+    {
+      "id": "PROD006",
+      "name": "PlayStation 5",
+      "category": "Videogiochi",
+      "subcategory": "Console",
+      "description": "Console next-gen con SSD ultra-veloce, controller DualSense haptico",
+      "specs": {
+        "gpu": "AMD RDNA 2",
+        "ram": "16GB GDDR6",
+        "storage": "825GB NVMe",
+        "resolution": "4K@120fps",
+        "controller": "DualSense"
+      },
+      "imageUrl": "https://example.com/ps5.jpg",
+      "releaseDate": "2020-11-12"
+    },
+    {
+      "id": "PROD007",
+      "name": "iPad Pro 12.9\" M2",
+      "category": "Elettronica",
+      "subcategory": "Tablet",
+      "description": "Tablet flagship con chip M2, display liquid retina, supporto Apple Pencil Pro",
+      "specs": {
+        "processor": "Apple M2",
+        "ram": "8GB",
+        "storage": "256GB",
+        "display": "12.9 Liquid Retina",
+        "weight": "682g"
+      },
+      "imageUrl": "https://example.com/ipad-pro.jpg",
+      "releaseDate": "2024-01-10"
+    },
+    {
+      "id": "PROD008",
+      "name": "Canon EOS R5 Mark II",
+      "category": "Fotografia",
+      "subcategory": "Fotocamere Digitali",
+      "description": "Fotocamera mirrorless full-frame con sensor da 45MP, video 8K RAW",
+      "specs": {
+        "sensor": "45MP Full-frame",
+        "video": "8K RAW",
+        "autofocus": "1053 AF punti",
+        "iso": "100-51200",
+        "weight": "738g"
+      },
+      "imageUrl": "https://example.com/canon-eos-r5.jpg",
+      "releaseDate": "2024-06-01"
+    },
+    {
+      "id": "PROD009",
+      "name": "DJI Air 3S Drone",
+      "category": "Droni",
+      "subcategory": "Droni Professionali",
+      "description": "Drone ultra-compatto con telecamera dual con sensori da 48MP e 12MP",
+      "specs": {
+        "weight": "249g",
+        "maxFlight": "46 minuti",
+        "cameras": "Dual camera 48MP + 12MP",
+        "transmission": "OcuSync 4",
+        "resolution": "4K video"
+      },
+      "imageUrl": "https://example.com/dji-air3s.jpg",
+      "releaseDate": "2024-04-15"
+    },
+    {
+      "id": "PROD010",
+      "name": "Mechanical Gaming Keyboard RGB",
+      "category": "Periferiche",
+      "subcategory": "Tastiere",
+      "description": "Tastiera meccanica per gaming con switch Kailh, illuminazione RGB personalizzabile",
+      "specs": {
+        "switches": "Kailh Box Hot Swap",
+        "layout": "Full 104 Keys",
+        "lighting": "RGB per-key",
+        "connection": "Wireless 2.4GHz + Bluetooth",
+        "batteryLife": "60 hours"
+      },
+      "imageUrl": "https://example.com/gaming-keyboard.jpg",
+      "releaseDate": "2023-11-20"
+    },
+    {
+      "id": "PROD011",
+      "name": "Logitech MX Master 3S Mouse",
+      "category": "Periferiche",
+      "subcategory": "Mouse",
+      "description": "Mouse ergonomico professionale con sensore 8K, ricarica rapida",
+      "specs": {
+        "dpi": "8000 DPI",
+        "connection": "Wireless 2.4GHz + Bluetooth",
+        "batteryLife": "70 days",
+        "buttons": "8 programmabili",
+        "weight": "141g"
+      },
+      "imageUrl": "https://example.com/logitech-mx.jpg",
+      "releaseDate": "2023-09-01"
+    },
+    {
+      "id": "PROD012",
+      "name": "SSD Samsung 870 EVO 1TB",
+      "category": "Archiviazione",
+      "subcategory": "SSD",
+      "description": "Unità SSD 2.5 SATA ad alte prestazioni, 560MB/s lettura",
+      "specs": {
+        "capacity": "1TB",
+        "interface": "SATA III",
+        "speed": "560 MB/s read, 530 MB/s write",
+        "formFactor": "2.5 pollici",
+        "warranty": "5 anni"
+      },
+      "imageUrl": "https://example.com/samsung-ssd.jpg",
+      "releaseDate": "2023-03-15"
+    }
+  ]
+}
