@@ -1,7 +1,11 @@
 package com.unict.dmi.omniprice;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+// Questa annotazione evita il crash se il JSON contiene campi extra (come "description")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductDTO {
-    private Long id;
+    private String id;
     private String name;
     private String category;
     private String subcategory;
@@ -11,7 +15,7 @@ public class ProductDTO {
     }
 
     // Costruttore con parametri
-    public ProductDTO(Long id, String name, String category, String subcategory) {
+    public ProductDTO(String id, String name, String category, String subcategory) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -19,11 +23,11 @@ public class ProductDTO {
     }
 
     // Getter e Setter
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,8 +57,9 @@ public class ProductDTO {
 
     @Override
     public String toString() {
+        // Ho aggiunto gli apici singoli ('') attorno all'id visto che è una Stringa
         return "ProductDTO{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", category='" + category + '\'' +
                 ", subcategory='" + subcategory + '\'' +
