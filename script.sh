@@ -2,7 +2,7 @@
 trap 'kill 0' SIGINT
 
 echo "🚀 Avvio Backend..."
-cd backend && ./mvnw spring-boot:run &
+cd backend/omniprice && ./mvnw spring-boot:run &
 
 echo "🚀 Avvio Frontend..."
 cd frontend && npm run dev &
