@@ -23,15 +23,18 @@ const router = createRouter({
 })
 
 // Protezione delle rotte (Middleware)
-router.beforeEach((to, from, next) => {
+// Protezione delle rotte (Middleware) - Versione Moderna!
+router.beforeEach((to, from) => {
     const authStore = useAuthStore()
 
     // Se la rotta richiede autenticazione e l'utente non è loggato, vai al login
     if (to.meta.requiresAuth && !authStore.token) {
-        next('/login')
-    } else {
-        next()
+        return '/login' // Invece di usare next('/login')
     }
+
+    // Se non ritorniamo nulla (o ritorniamo true), la navigazione procede normale
+    return true
 })
 
 export default router
+

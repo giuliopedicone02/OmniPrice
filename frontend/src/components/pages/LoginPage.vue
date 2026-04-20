@@ -31,7 +31,7 @@
         <button 
           type="submit" 
           :disabled="isLoading"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
         >
           {{ isLoading ? 'Accesso in corso...' : 'Accedi' }}
         </button>
@@ -57,16 +57,19 @@ const handleLogin = async () => {
   isLoading.value = true
   errorMessage.value = ''
   
-  const success = await authStore.login(email.value, password.value)
-  
-  if (success) {
-    alert("Login effettuato con successo! Guarda la console.")
-    console.log("Token ricevuto:", authStore.token)
-    // router.push('/') // Decommenteremo questo quando avremo la Home
-  } else {
-    errorMessage.value = "Credenziali non valide o server non raggiungibile."
+  try {
+    const success = await authStore.login(email.value, password.value)
+    
+    if (success) {
+      // Usiamo l'approccio standard di Vue Router per cambiare pagina
+      router.push('/')
+    } else {
+      errorMessage.value = "Credenziali non valide o server non raggiungibile."
+    }
+  } catch (error) {
+    errorMessage.value = "Si è verificato un errore di rete."
+  } finally {
+    isLoading.value = false
   }
-  
-  isLoading.value = false
 }
 </script>
