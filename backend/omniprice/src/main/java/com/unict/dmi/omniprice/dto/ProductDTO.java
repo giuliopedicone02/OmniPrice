@@ -6,6 +6,8 @@ public class ProductDTO {
     private String id;
     private String name;
     private String category;
+    private String description;
+    private String imageUrl;
     private List<PriceDTO> prices;
     private Double minPrice;
     private Double maxPrice;
@@ -35,6 +37,12 @@ public class ProductDTO {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public List<PriceDTO> getPrices() {
         return prices;

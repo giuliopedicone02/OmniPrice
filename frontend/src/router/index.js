@@ -11,8 +11,19 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        // Per ora mandiamo alla ricerca, la implementeremo nella Fase 2
         component: () => import('../components/pages/SearchPage.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/product/:id',
+        name: 'ProductDetail',
+        component: () => import('../components/pages/ProductDetailPage.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/alerts',
+        name: 'Alerts',
+        component: () => import('../components/pages/AlertPage.vue'),
         meta: { requiresAuth: true }
     }
 ]
@@ -22,19 +33,12 @@ const router = createRouter({
     routes
 })
 
-// Protezione delle rotte (Middleware)
-// Protezione delle rotte (Middleware) - Versione Moderna!
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
     const authStore = useAuthStore()
-
-    // Se la rotta richiede autenticazione e l'utente non è loggato, vai al login
     if (to.meta.requiresAuth && !authStore.token) {
-        return '/login' // Invece di usare next('/login')
+        return '/login'
     }
-
-    // Se non ritorniamo nulla (o ritorniamo true), la navigazione procede normale
     return true
 })
 
 export default router
-

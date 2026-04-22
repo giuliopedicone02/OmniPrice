@@ -1,38 +1,71 @@
 package com.unict.dmi.omniprice.config;
 
+import com.unict.dmi.omniprice.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Configurazione Spring Security con JWT stateless.
+ * Pattern: Reference Monitor via JwtAuthFilter su ogni richiesta.
+ * Pattern: RBAC tramite ruoli nel token JWT.
+ */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Diciamo a Spring Security di usare la nostra configurazione CORS
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 2. Disabilitiamo il CSRF (che blocca le POST request da app esterne)
-                .csrf(AbstractHttpConfigurer::disable)
-                // 3. Regole di accesso: lasciamo aperto tutto per ora, restringeremo dopo!
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Login e Register aperti a tutti
-                        .anyRequest().permitAll() // Temporaneamente permettiamo tutto il resto
-                );
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                // Endpoint admin: solo ruolo ADMIN
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Tutto il resto richiede autenticazione
+                .anyRequest().authenticated()
+            )
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Spostiamo qui la configurazione CORS così Spring Security la capisce!
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
