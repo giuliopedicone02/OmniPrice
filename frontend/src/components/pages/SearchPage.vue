@@ -2,7 +2,7 @@
   <div>
 
     <!-- Hero search -->
-    <div class="bg-gradient-to-br from-violet-700 via-indigo-700 to-indigo-800 py-12 px-4">
+    <div class="bg-gradient-to-br from-violet-700 via-indigo-700 to-indigo-800 py-10 px-4">
       <div class="max-w-3xl mx-auto text-center">
         <h1 class="text-3xl font-bold text-white mb-2">Trova il miglior prezzo</h1>
         <p class="text-indigo-200 text-sm mb-6">Confrontiamo 4 store in tempo reale per te</p>
@@ -22,8 +22,8 @@
             >
             <button
               v-if="searchQuery"
-              @click="searchQuery = ''; results = []; hasSearched = false"
-              class="text-slate-400 hover:text-slate-600"
+              @click="clearSearch"
+              class="text-slate-400 hover:text-slate-600 transition-colors"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -60,70 +60,120 @@
     <!-- Contenuto principale -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-      <!-- Header risultati -->
-      <div v-if="results.length > 0" class="flex items-center justify-between mb-6">
+      <!-- Toolbar: filtri + sort + vista -->
+      <div v-if="results.length > 0" class="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h2 class="text-lg font-bold text-slate-900">
-            {{ results.length }} risultati per "<span class="text-indigo-600">{{ lastQuery }}</span>"
+            {{ filteredAndSorted.length }} risultati
+            <span class="text-slate-400 font-normal text-base">per "<span class="text-indigo-600 font-semibold">{{ lastQuery }}</span>"</span>
           </h2>
           <p class="text-sm text-slate-500 mt-0.5">Prezzi aggiornati in tempo reale da 4 store</p>
         </div>
-        <!-- Sort -->
-        <select v-model="sortBy" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-          <option value="name">Ordina per nome</option>
-          <option value="price_asc">Prezzo: crescente</option>
-          <option value="price_desc">Prezzo: decrescente</option>
-        </select>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Filtro categoria -->
+          <div v-if="categories.length > 1" class="flex items-center gap-1.5 flex-wrap">
+            <button
+              @click="activeCategory = ''"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border"
+              :class="activeCategory === '' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'"
+            >
+              Tutte
+            </button>
+            <button
+              v-for="cat in categories"
+              :key="cat"
+              @click="activeCategory = activeCategory === cat ? '' : cat"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border"
+              :class="activeCategory === cat ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'"
+            >
+              {{ cat }}
+            </button>
+          </div>
+
+          <!-- Sort -->
+          <select v-model="sortBy" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <option value="name">Nome</option>
+            <option value="price_asc">Prezzo ↑</option>
+            <option value="price_desc">Prezzo ↓</option>
+            <option value="discount">Sconto</option>
+          </select>
+
+          <!-- View toggle -->
+          <div class="flex items-center bg-slate-100 rounded-lg p-1">
+            <button
+              @click="viewMode = 'grid'"
+              class="p-1.5 rounded transition-all"
+              :class="viewMode === 'grid' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+            <button
+              @click="viewMode = 'list'"
+              class="p-1.5 rounded transition-all"
+              :class="viewMode === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Griglia prodotti -->
-      <div v-if="sortedResults.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div v-if="filteredAndSorted.length > 0 && viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <div
-          v-for="product in sortedResults"
+          v-for="product in filteredAndSorted"
           :key="product.id"
-          class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden group"
+          class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden"
         >
-          <!-- Header card -->
           <div class="p-5 pb-4 flex-1">
             <div class="flex items-start justify-between mb-3 gap-2">
               <h3 class="font-bold text-slate-900 text-base leading-snug">{{ product.name }}</h3>
-              <span class="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full flex-shrink-0 border border-indigo-100">
-                {{ product.category }}
-              </span>
+              <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100">
+                  {{ product.category }}
+                </span>
+                <span v-if="bestDiscount(product) > 0" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">
+                  -{{ bestDiscount(product) }}% OFF
+                </span>
+              </div>
             </div>
 
             <p v-if="product.description" class="text-xs text-slate-500 line-clamp-2 mb-4">
               {{ product.description }}
             </p>
 
-            <!-- Prezzi store -->
-            <div class="space-y-2">
+            <!-- Prezzi con barre comparative -->
+            <div class="space-y-2.5">
               <div
-                v-for="price in product.prices"
+                v-for="price in sortedPrices(product)"
                 :key="price.storeId"
-                class="flex items-center gap-2"
-                :class="price.finalPrice === product.minPrice ? 'opacity-100' : 'opacity-70'"
               >
-                <!-- Indicatore miglior prezzo -->
-                <div class="w-2 h-2 rounded-full flex-shrink-0"
-                  :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-slate-200'">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-2 h-2 rounded-full flex-shrink-0"
+                    :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-slate-200'">
+                  </div>
+                  <span class="text-xs text-slate-600 flex-1 truncate">{{ price.store }}</span>
+                  <span v-if="price.discount > 0" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.5 rounded-md font-medium">-{{ price.discount }}%</span>
+                  <span v-if="price.availability === 'low_stock'" class="text-xs text-amber-500 font-bold">!</span>
+                  <span class="text-sm font-bold text-slate-900 tabular-nums">{{ price.finalPrice.toFixed(2) }}€</span>
                 </div>
-                <span class="text-xs text-slate-600 flex-1 truncate">{{ price.store }}</span>
-
-                <!-- Badge sconto -->
-                <span v-if="price.discount > 0" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.5 rounded-md font-medium">
-                  -{{ price.discount }}%
-                </span>
-
-                <!-- Disponibilità -->
-                <span v-if="price.availability === 'low_stock'" class="text-xs text-amber-500 font-medium">!</span>
-
-                <span class="text-sm font-bold text-slate-900 tabular-nums">{{ price.finalPrice.toFixed(2) }}€</span>
+                <!-- Price bar -->
+                <div class="h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all duration-500"
+                    :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-slate-300'"
+                    :style="{ width: priceBarWidth(price.finalPrice, product) + '%' }"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Footer card -->
           <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
             <div>
               <p class="text-xs text-slate-400">Miglior prezzo</p>
@@ -142,6 +192,61 @@
         </div>
       </div>
 
+      <!-- Vista lista -->
+      <div v-else-if="filteredAndSorted.length > 0 && viewMode === 'list'" class="space-y-3">
+        <div
+          v-for="product in filteredAndSorted"
+          :key="product.id"
+          class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+        >
+          <div class="p-5 flex items-start gap-5">
+            <!-- Info prodotto -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start gap-2 mb-1">
+                <h3 class="font-bold text-slate-900 text-base leading-snug">{{ product.name }}</h3>
+                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100 flex-shrink-0">{{ product.category }}</span>
+                <span v-if="bestDiscount(product) > 0" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100 flex-shrink-0">-{{ bestDiscount(product) }}% OFF</span>
+              </div>
+              <p v-if="product.description" class="text-xs text-slate-500 mb-3">{{ product.description }}</p>
+
+              <!-- Barre prezzi in lista -->
+              <div class="space-y-2">
+                <div v-for="price in sortedPrices(product)" :key="price.storeId" class="flex items-center gap-3">
+                  <span class="text-xs text-slate-500 w-24 flex-shrink-0 truncate">{{ price.store }}</span>
+                  <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full"
+                      :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-indigo-200'"
+                      :style="{ width: priceBarWidth(price.finalPrice, product) + '%' }"
+                    ></div>
+                  </div>
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <span v-if="price.discount > 0" class="text-xs text-emerald-600 font-medium">-{{ price.discount }}%</span>
+                    <span v-if="price.availability === 'low_stock'" class="text-xs text-amber-500 font-bold">!</span>
+                    <span class="text-sm font-bold tabular-nums" :class="price.finalPrice === product.minPrice ? 'text-emerald-600' : 'text-slate-700'">{{ price.finalPrice.toFixed(2) }}€</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="flex-shrink-0 text-right">
+              <p class="text-xs text-slate-400 mb-0.5">Miglior prezzo</p>
+              <p class="text-2xl font-bold text-emerald-600 tabular-nums mb-3">{{ product.minPrice?.toFixed(2) }}€</p>
+              <router-link
+                :to="`/product/${product.id}`"
+                class="flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition-colors shadow-sm whitespace-nowrap"
+              >
+                Vedi dettagli
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Skeleton loading -->
       <div v-else-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <div v-for="n in 6" :key="n" class="bg-white rounded-2xl border border-slate-100 p-5 animate-pulse">
@@ -151,16 +256,22 @@
           </div>
           <div class="h-3 bg-slate-100 rounded mb-1 w-full"></div>
           <div class="h-3 bg-slate-100 rounded mb-4 w-3/4"></div>
-          <div class="space-y-2">
-            <div class="h-3 bg-slate-100 rounded"></div>
-            <div class="h-3 bg-slate-100 rounded"></div>
-            <div class="h-3 bg-slate-100 rounded"></div>
-            <div class="h-3 bg-slate-100 rounded"></div>
+          <div class="space-y-2.5">
+            <div v-for="i in 4" :key="i">
+              <div class="h-3 bg-slate-100 rounded mb-1"></div>
+              <div class="h-1 bg-slate-100 rounded"></div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Nessun risultato -->
+      <!-- Nessun risultato (dopo filtro categoria) -->
+      <div v-else-if="results.length > 0 && filteredAndSorted.length === 0" class="text-center py-16">
+        <p class="text-slate-500 font-medium mb-2">Nessun prodotto nella categoria "{{ activeCategory }}"</p>
+        <button @click="activeCategory = ''" class="text-sm text-indigo-600 font-medium hover:underline">Mostra tutti i risultati</button>
+      </div>
+
+      <!-- Nessun risultato dalla ricerca -->
       <div v-else-if="hasSearched && !isLoading" class="text-center py-20">
         <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,13 +304,38 @@ const isLoading = ref(false)
 const hasSearched = ref(false)
 const lastQuery = ref('')
 const sortBy = ref('name')
+const viewMode = ref('grid')
+const activeCategory = ref('')
 
 const quickSearches = ['Laptop', 'iPhone', 'PlayStation 5', 'Cuffie', 'MacBook', 'Drone', 'Tastiera', 'Mouse']
 
-const sortedResults = computed(() => {
-  const arr = [...results.value]
+const categories = computed(() => {
+  const cats = [...new Set(results.value.map(p => p.category).filter(Boolean))]
+  return cats.sort()
+})
+
+const sortedPrices = (product) =>
+  [...(product.prices || [])].sort((a, b) => a.finalPrice - b.finalPrice)
+
+const bestDiscount = (product) =>
+  Math.max(...(product.prices || []).map(p => p.discount || 0))
+
+const priceBarWidth = (price, product) => {
+  const prices = (product.prices || []).map(p => p.finalPrice)
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
+  if (max === min) return 100
+  return Math.round(((price - min) / (max - min)) * 60 + 40)
+}
+
+const filteredAndSorted = computed(() => {
+  let arr = activeCategory.value
+    ? results.value.filter(p => p.category === activeCategory.value)
+    : [...results.value]
+
   if (sortBy.value === 'price_asc') return arr.sort((a, b) => (a.minPrice ?? 0) - (b.minPrice ?? 0))
   if (sortBy.value === 'price_desc') return arr.sort((a, b) => (b.minPrice ?? 0) - (a.minPrice ?? 0))
+  if (sortBy.value === 'discount') return arr.sort((a, b) => bestDiscount(b) - bestDiscount(a))
   return arr.sort((a, b) => a.name.localeCompare(b.name))
 })
 
@@ -208,6 +344,7 @@ const handleSearch = async () => {
   isLoading.value = true
   hasSearched.value = true
   lastQuery.value = searchQuery.value
+  activeCategory.value = ''
   try {
     const response = await searchProducts(searchQuery.value)
     results.value = response.results || []
@@ -221,6 +358,13 @@ const handleSearch = async () => {
 const quickSearch = (term) => {
   searchQuery.value = term
   handleSearch()
+}
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  results.value = []
+  hasSearched.value = false
+  activeCategory.value = ''
 }
 
 onMounted(() => {

@@ -9,20 +9,27 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         async login(email, password) {
             try {
-                // Aggiungiamo /auth qui
                 const response = await api.post('/auth/login', { email, password })
-
-                // Salviamo i dati nello state
                 this.token = response.data.token
                 this.user = response.data.user
-
-                // Salviamo nel localStorage per farli sopravvivere al refresh
                 localStorage.setItem('token', this.token)
                 localStorage.setItem('user', JSON.stringify(this.user))
-
                 return true
             } catch (error) {
-                console.error("Errore di login:", error)
+                console.error('Errore di login:', error)
+                return false
+            }
+        },
+        async register(name, email, password, role = 'STANDARD') {
+            try {
+                const response = await api.post('/auth/register', { name, email, password, role })
+                this.token = response.data.token
+                this.user = response.data.user
+                localStorage.setItem('token', this.token)
+                localStorage.setItem('user', JSON.stringify(this.user))
+                return true
+            } catch (error) {
+                console.error('Errore di registrazione:', error)
                 return false
             }
         },
