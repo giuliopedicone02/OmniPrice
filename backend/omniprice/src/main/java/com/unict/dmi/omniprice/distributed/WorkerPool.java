@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Pool di worker che implementa il pattern Leader-Followers.
@@ -35,6 +36,9 @@ public class WorkerPool {
     private static final Logger log = LoggerFactory.getLogger(WorkerPool.class);
 
     private static final int POOL_SIZE = 4;
+    private static final long HEARTBEAT_INTERVAL_MS = 5_000;
+
+    private final HeartBeatService heartBeatService;
 
     // Solo UN thread puo' essere leader (ha il semaforo)
     private final Semaphore leaderSemaphore = new Semaphore(1);
@@ -44,6 +48,10 @@ public class WorkerPool {
 
     private final AtomicInteger activeWorkers = new AtomicInteger(0);
     private final AtomicInteger processedTasks = new AtomicInteger(0);
+
+    public WorkerPool(HeartBeatService heartBeatService) {
+        this.heartBeatService = heartBeatService;
+    }
 
     @PostConstruct
     public void start() {
@@ -62,6 +70,9 @@ public class WorkerPool {
     public void stop() {
         running = false;
         workers.forEach(Thread::interrupt);
+        for (int i = 0; i < POOL_SIZE; i++) {
+            heartBeatService.deregister("worker-" + i);
+        }
         log.info("WorkerPool fermato. Task elaborati: {}", processedTasks.get());
     }
 
@@ -76,10 +87,21 @@ public class WorkerPool {
      * Loop principale di ciascun thread.
      * Ogni thread alterna tra ruolo follower (aspetta il semaforo)
      * e ruolo leader (prende task dalla coda) e worker (processa il task).
+     * Ogni worker invia un HeartBeat periodico per segnalare che e' vivo.
      */
     private void workerLoop(int workerId) {
+        String workerName = "worker-" + workerId;
+        AtomicLong lastBeat = new AtomicLong(0);
+
         while (running) {
             try {
+                // === HeartBeat: segnala al monitor che il worker e' vivo ===
+                long now = System.currentTimeMillis();
+                if (now - lastBeat.get() >= HEARTBEAT_INTERVAL_MS) {
+                    heartBeatService.beat(workerName);
+                    lastBeat.set(now);
+                }
+
                 // === Fase FOLLOWER: compete per diventare leader ===
                 if (!leaderSemaphore.tryAcquire(1, TimeUnit.SECONDS)) {
                     continue; // nessun semaforo disponibile, ritenta

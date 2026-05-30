@@ -1,5 +1,6 @@
 package com.unict.dmi.omniprice.scheduler;
 
+import com.unict.dmi.omniprice.distributed.GenerationClockService;
 import com.unict.dmi.omniprice.dto.AlertDTO;
 import com.unict.dmi.omniprice.dto.PriceDTO;
 import com.unict.dmi.omniprice.messaging.AlertProducer;
@@ -30,13 +31,20 @@ public class PriceCheckScheduler {
 
     private final AlertService alertService;
     private final DatasetService datasetService;
+    private final GenerationClockService generationClockService;
+    private final BatchWriteScheduler batchWriteScheduler;
 
     @Autowired(required = false)
     private AlertProducer alertProducer;  // null se RabbitMQ disabilitato
 
-    public PriceCheckScheduler(AlertService alertService, DatasetService datasetService) {
+    public PriceCheckScheduler(AlertService alertService,
+                               DatasetService datasetService,
+                               GenerationClockService generationClockService,
+                               BatchWriteScheduler batchWriteScheduler) {
         this.alertService = alertService;
         this.datasetService = datasetService;
+        this.generationClockService = generationClockService;
+        this.batchWriteScheduler = batchWriteScheduler;
     }
 
     @Scheduled(cron = "${omniprice.scheduler.price-check-cron:0 */5 * * * *}")
@@ -52,7 +60,27 @@ public class PriceCheckScheduler {
     }
 
     private void checkAlert(AlertDTO alert) {
+        // === Generation Clock: garantisce ordine causale degli aggiornamenti ===
+        // Genera un numero di generazione monotono per questo ciclo di controllo.
+        // Se un aggiornamento piu' recente (gen piu' alta) ha gia' processato
+        // questo prodotto, questo aggiornamento e' obsoleto e viene scartato.
+        long generation = generationClockService.nextGeneration();
+        if (!generationClockService.tryUpdate(alert.getProductId(), generation)) {
+            log.debug("Aggiornamento obsoleto scartato per prodotto {} (gen {})",
+                    alert.getProductId(), generation);
+            return;
+        }
+
         List<PriceDTO> prices = datasetService.getAllPricesForProduct(alert.getProductId());
+
+        // === Request Batch: accoda ogni osservazione di prezzo per la scrittura batch ===
+        // I prezzi vengono raccolti in ConcurrentLinkedQueue e scritti in batch
+        // ogni 2 minuti da BatchWriteScheduler, riducendo le operazioni di I/O.
+        for (PriceDTO price : prices) {
+            batchWriteScheduler.queuePriceUpdate(
+                    alert.getProductId(), price.getStore(), price.getFinalPrice()
+            );
+        }
 
         Optional<PriceDTO> bestPrice = prices.stream()
                 .filter(p -> p.getFinalPrice() <= alert.getTargetPrice())
@@ -60,7 +88,7 @@ public class PriceCheckScheduler {
 
         if (bestPrice.isPresent()) {
             PriceDTO triggering = bestPrice.get();
-            log.info("Alert {} scattato: {} a {:.2f}€ su {} (target: {:.2f}€)",
+            log.info("Alert {} scattato: {} a {}€ su {} (target: {}€)",
                     alert.getId(), alert.getProductName(),
                     triggering.getFinalPrice(), triggering.getStore(),
                     alert.getTargetPrice());

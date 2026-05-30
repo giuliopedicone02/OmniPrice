@@ -98,7 +98,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Resilience4J (Circuit Breaker, Retry, TimeLimiter) -->
+        <!-- Resilience4J (Circuit Breaker, Retry, TimeLimiter, RateLimiter) -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-circuitbreaker</artifactId>
@@ -112,6 +112,11 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-timelimiter</artifactId>
+            <version>${resilience4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-ratelimiter</artifactId>
             <version>${resilience4j.version}</version>
         </dependency>
 
