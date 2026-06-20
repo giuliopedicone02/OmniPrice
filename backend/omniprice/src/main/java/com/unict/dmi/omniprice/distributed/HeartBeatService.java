@@ -75,8 +75,9 @@ public class HeartBeatService {
         List<String> alive = getAliveWorkers();
 
         if (!dead.isEmpty()) {
-            log.warn("HeartBeat: {} worker morti rilevati: {}", dead.size(), dead);
-            // In produzione: rimuovere dal pool, avviare worker sostitutivi
+            log.warn("HeartBeat: {} nodi/worker morti rilevati: {}", dead.size(), dead);
+            // La reazione (es. nuova elezione del leader) e' demandata a chi usa il
+            // rilevatore: per il cluster e' il ClusterCoordinator (ISD §2.2.3).
             dead.forEach(heartbeats::remove);
         }
 

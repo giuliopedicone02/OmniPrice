@@ -1,5 +1,7 @@
 package com.unict.dmi.omniprice.security;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
@@ -17,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Filtro Rate-Limiting per l'endpoint /auth/login.
@@ -42,10 +43,22 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     private int refreshPeriodSeconds;
 
     /*
-     * Un RateLimiter per ogni IP sorgente. ConcurrentHashMap garantisce
-     * thread-safety in ambienti multi-thread.
+     * Se true, si fida dell'header X-Forwarded-For (solo dietro un reverse proxy
+     * FIDATO). Se false (default), usa l'IP reale della connessione: questo evita
+     * che un client possa aggirare il rate limit falsificando X-Forwarded-For.
      */
-    private final ConcurrentHashMap<String, RateLimiter> limitersByIp = new ConcurrentHashMap<>();
+    @Value("${omniprice.ratelimit.login.trust-forwarded-header:false}")
+    private boolean trustForwardedHeader;
+
+    /*
+     * Un RateLimiter per ogni IP sorgente, in una cache con eviction:
+     * expireAfterAccess evita la crescita illimitata della mappa (memory leak)
+     * quando arrivano richieste da molti IP diversi nel tempo.
+     */
+    private final Cache<String, RateLimiter> limitersByIp = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .maximumSize(100_000)
+            .build();
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -59,7 +72,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = resolveClientIp(request);
-        RateLimiter limiter = limitersByIp.computeIfAbsent(clientIp, this::createLimiter);
+        RateLimiter limiter = limitersByIp.get(clientIp, this::createLimiter);
 
         boolean permitted = limiter.acquirePermission();
 
@@ -87,9 +100,13 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     }
 
     private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
+        // X-Forwarded-For e' falsificabile dal client: lo si usa solo se esplicitamente
+        // configurato (cioe' quando c'e' un reverse proxy fidato che lo imposta).
+        if (trustForwardedHeader) {
+            String forwarded = request.getHeader("X-Forwarded-For");
+            if (forwarded != null && !forwarded.isBlank()) {
+                return forwarded.split(",")[0].trim();
+            }
         }
         return request.getRemoteAddr();
     }

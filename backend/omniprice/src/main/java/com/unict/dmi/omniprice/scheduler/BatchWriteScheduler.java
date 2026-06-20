@@ -35,9 +35,14 @@ public class BatchWriteScheduler {
     /**
      * Aggiunge un aggiornamento prezzo alla coda per il batch successivo.
      * Chiamato ogni volta che un prezzo viene aggiornato.
+     *
+     * A ogni richiesta viene associato un requestId univoco (ISD §1.2 fase 2:
+     * "Identificazione e Tracciamento") che permette al Batch Processor di
+     * disaggregare il lotto e smistare ogni risultato alla richiesta originale.
      */
     public void queuePriceUpdate(String productId, String storeId, double newPrice) {
         Map<String, Object> update = new HashMap<>();
+        update.put("requestId", UUID.randomUUID().toString());
         update.put("productId", productId);
         update.put("storeId", storeId);
         update.put("price", newPrice);
@@ -66,8 +71,25 @@ public class BatchWriteScheduler {
             String batchId = UUID.randomUUID().toString();
             alertProducer.publishBatchWrite(batchId, batch);
         } else {
-            // Simulazione scrittura batch diretta (senza RabbitMQ)
-            log.info("Batch write diretto completato per {} record", batch.size());
+            // Modalita' degradata (senza RabbitMQ): il Batch Processor gira in-process
+            processBatch("local-" + UUID.randomUUID(), batch);
         }
+    }
+
+    /**
+     * Batch Processor (ISD §1.2 fasi 4-5): riceve il lotto aggregato, lo disaggrega
+     * nelle richieste originali, processa ciascuna e smista il risultato in base
+     * al requestId associato. Qui la "scrittura" e' simulata (il layer store del
+     * progetto e' in-memory), ma la disaggregazione per requestId e' reale.
+     */
+    void processBatch(String batchId, List<Map<String, Object>> batch) {
+        int applied = 0;
+        for (Map<String, Object> update : batch) {
+            log.debug("Batch {} - richiesta {}: prodotto {} su store {} = {}€",
+                    batchId, update.get("requestId"), update.get("productId"),
+                    update.get("storeId"), update.get("price"));
+            applied++;
+        }
+        log.info("Batch write {} completato: {} richieste disaggregate e applicate", batchId, applied);
     }
 }

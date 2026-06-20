@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -66,7 +67,12 @@ public class StoreService {
 
     /**
      * Interroga un singolo store in modo asincrono con Resilience4J.
-     * Ogni chiamata ha Circuit Breaker + Retry + latenza simulata.
+     * Ogni chiamata ha Timeout + Circuit Breaker + Retry + latenza simulata.
+     *
+     * Pattern: Timeout (ISD §5.2) — il codice non puo' attendere indefinitamente
+     * una risposta che potrebbe non arrivare mai. Allo scadere di {@code timeoutSeconds}
+     * la chiamata "rinuncia" e restituisce un risultato di fallback (lista vuota),
+     * evitando che un singolo store lento blocchi l'intera aggregazione (cascading failure).
      */
     public CompletableFuture<List<PriceDTO>> fetchPricesFromStore(String storeId, String productId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -82,8 +88,15 @@ public class StoreService {
                 return decorated.get();
             } catch (Exception e) {
                 log.warn("Store {} non disponibile per prodotto {}: {}", storeId, productId, e.getMessage());
-                return Collections.emptyList();
+                return Collections.<PriceDTO>emptyList();
             }
+        })
+        // === Timeout: interrompe l'attesa oltre timeoutSeconds (fail fast) ===
+        .orTimeout(timeoutSeconds, TimeUnit.SECONDS)
+        .exceptionally(ex -> {
+            log.warn("Timeout ({}s) sullo store {} per prodotto {}: ritorno fallback vuoto",
+                    timeoutSeconds, storeId, productId);
+            return Collections.<PriceDTO>emptyList();
         });
     }
 

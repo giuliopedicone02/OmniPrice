@@ -16,9 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Pool di worker che implementa il pattern Leader-Followers.
+ * Pool di worker che implementa il pattern di CONCORRENZA Leader/Followers (POSA2),
+ * a livello di thread. Da non confondere con il pattern distribuito "Leader and
+ * Followers" (ISD Cap. 2, replicazione e consenso), implementato dal
+ * {@link com.unict.dmi.omniprice.cluster.ClusterCoordinator}.
  *
- * Pattern: Leader-Followers
+ * Pattern: Leader/Followers (concorrenza)
  * Un solo thread e' il "leader" in ogni momento: attende nuovi task dalla coda.
  * Quando un task arriva:
  *   1. Il leader rilascia il semaforo, promuovendo un follower a nuovo leader

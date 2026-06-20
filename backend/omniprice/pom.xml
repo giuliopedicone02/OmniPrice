@@ -120,6 +120,12 @@
             <version>${resilience4j.version}</version>
         </dependency>
 
+        <!-- Caffeine: cache con eviction per i RateLimiter per-IP (evita memory leak) -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

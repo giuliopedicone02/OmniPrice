@@ -80,7 +80,7 @@ public class AuthController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
-        response.put("expiresIn", 86400000);
+        response.put("expiresIn", jwtUtil.getExpirationMs());
         response.put("user", toDTO(user));
 
         return ResponseEntity.ok(response);

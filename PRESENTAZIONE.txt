@@ -1,15 +1,126 @@
 ================================================================================
   OMNIPRICE — ANALISI COMPLETA, COERENZA DEI PATTERN E GUIDA ALLA PRESENTAZIONE
 ================================================================================
-Data: Maggio 2026
+Data: Giugno 2026
 Progetto: Sistema Distribuito di Tracciamento Prezzi
-Corso: Sistemi Distribuiti
+Corso: Ingegneria dei Sistemi Distribuiti (Prof. Alfio Spoto, UNICT)
 Stack: Spring Boot 4 (Java 17) + Vue 3 + RabbitMQ + H2
 
 
 ================================================================================
-  SEZIONE 0 — MODIFICHE BACKEND (sessione 2026-05-31)
+  SEZIONE 0 — MODIFICHE BACKEND
 ================================================================================
+
+################################################################################
+#  PASSATA 2 (2026-06-20) — ALLINEAMENTO ALLA DOCUMENTAZIONE ISD.pdf            #
+################################################################################
+
+Confronto sistematico di ogni pattern con gli appunti del corso (ISD.pdf, Prof.
+Spoto). Sono stati corretti i divari di coerenza piu' rilevanti. Tutto compila
+e i test passano (6/6).
+
+--- [A] Generation Clock: semantica a EPOCA (ISD §2.4) ---
+File: distributed/GenerationClockService.java, scheduler/PriceCheckScheduler.java
+
+PROBLEMA: nextGeneration() incrementava ad OGNI aggiornamento -> era un numero di
+sequenza per-richiesta, non l'epoca del cluster. Il PDF (§2.4) dice che la
+generazione si incrementa SOLO ad ogni nuova elezione; tutti gli aggiornamenti
+dello stesso leader portano la stessa generazione.
+
+SOLUZIONE:
+  - getCurrentGeneration() restituisce l'epoca corrente SENZA incrementare.
+  - startNewGeneration() incrementa l'epoca solo all'elezione di un nuovo leader.
+  - tryUpdate() rifiuta solo le epoche INFERIORI (< invece di <=): cosi' piu'
+    aggiornamenti dello stesso ciclo passano, ma un leader "zombie" con epoca
+    vecchia viene scartato (scenario del PDF).
+  - PriceCheckScheduler legge l'epoca UNA volta per ciclo e la usa per tutti gli
+    alert, invece di generarne una nuova per ogni alert.
+
+--- [B] Timeout REALE sulle chiamate store (ISD §5.2) ---
+File: service/StoreService.java
+
+PROBLEMA: il campo timeoutSeconds era iniettato ma MAI usato; non esisteva alcun
+TimeLimiter. Il "Timeout" (a cui il PDF dedica l'intera §5.2) era dichiarato ma
+inesistente.
+
+SOLUZIONE: fetchPricesFromStore() applica .orTimeout(timeoutSeconds, SECONDS) con
+fallback a lista vuota via .exceptionally(). Uno store lento non blocca piu'
+l'aggregazione (fail fast, niente cascading failure). Pipeline ora completa:
+Timeout -> Retry -> Circuit Breaker.
+
+--- [C] Leader and Followers DISTRIBUITO (ISD Cap. 2) ---
+File NUOVI: cluster/NodeState.java, cluster/LogEntry.java, cluster/ClusterNode.java,
+            cluster/ClusterCoordinator.java
+File: controller/AdminController.java (5 endpoint /cluster), WorkerPool.java (javadoc)
+
+PROBLEMA: il PDF Cap. 2 descrive il Leader-Followers DISTRIBUITO (replicazione,
+elezione, Majority Quorum, epoca). Il WorkerPool implementa invece il pattern
+OMONIMO di CONCORRENZA (thread che si passano il ruolo di leader): pattern diverso
+che condivide solo il nome. Mancavano del tutto Majority Quorum ed elezione.
+
+SOLUZIONE: implementato un cluster simulato in-process (3 nodi):
+  - Majority Quorum (§2.1): quorum = n/2+1; una scrittura e' committed solo con
+    >= quorum ack. Sotto quorum -> nessun leader, scritture rifiutate.
+  - Elezione (§2.2.3.1): vince il nodo piu' aggiornato (epoca, poi log, poi ID),
+    solo con maggioranza di voti.
+  - Heart Beat (§2.3): intervallo 1s, timeout 3s (timeout > intervallo > RTT);
+    il monitor rileva il leader morto e rielegge.
+  - Generation Clock = epoca (§2.4): un leader zombie con epoca obsoleta viene
+    rifiutato e degrada a follower.
+  Il WorkerPool resta, ma la sua javadoc ora chiarisce che e' il Leader/Followers
+  di CONCORRENZA (POSA2), distinto dal cluster.
+
+--- [D] Request Batch: tracciamento + disaggregazione (ISD §1.2 fasi 2,4,5) ---
+File: scheduler/BatchWriteScheduler.java, messaging/AlertConsumer.java
+
+PROBLEMA: mancavano il requestId per richiesta (fase 2) e l'elaborazione reale del
+batch (fasi 4-5): AlertConsumer.processBatchWrite scartava il payload e loggava.
+
+SOLUZIONE: ogni update accodato ha un requestId univoco; il Batch Processor
+(sia in modalita' RabbitMQ sia degradata) disaggrega il lotto e processa ogni
+richiesta identificandola col suo requestId.
+
+--- [E] Idempotent Receiver: purge a ritenzione (ISD §5) ---
+File: messaging/AlertConsumer.java, repository/ProcessedMessageRepository.java,
+      application.properties
+
+PROBLEMA: i ProcessedMessage non venivano mai cancellati -> crescita illimitata.
+Il PDF richiede che le richieste gia' elaborate siano cancellate dopo un timeout.
+
+SOLUZIONE: purgeProcessedMessages() schedulato (cron orario) cancella i messaggi
+oltre la finestra di ritenzione (omniprice.idempotency.retention-minutes=60).
+
+--- [F] Reference Monitor unificato ---
+File: controller/AdminController.java, config/SecurityConfig.java
+
+PROBLEMA: due meccanismi di autorizzazione in parallelo (@PreAuthorize in
+AdminController, @RequiresRole altrove). Il Reference Monitor deve essere un
+punto UNICO.
+
+SOLUZIONE: AdminController passato a @RequiresRole (stesso AOP degli altri);
+rimosso @EnableMethodSecurity. Un solo punto di enforcement.
+
+--- BUG IMPLEMENTATIVI CORRETTI ---
+  1. Memory leak nel rate limiter: ConcurrentHashMap per-IP illimitata ->
+     cache Caffeine con expireAfterAccess(10min) + maximumSize.
+  2. Bypass rate limiter: X-Forwarded-For (falsificabile) ora ignorato di default;
+     usato solo dietro proxy fidato (trust-forwarded-header=false di default).
+  3. Log rotto: in AlertConsumer "{:.2f}" non e' un placeholder SLF4J valido ->
+     {} + String.format("%.2f", ...).
+  4. expiresIn hardcoded (86400000) in AuthController -> jwtUtil.getExpirationMs().
+
+--- TEST AGGIUNTO ---
+File: test/.../cluster/ClusterCoordinatorTest.java
+  5 test deterministici: elezione iniziale, scrittura con quorum, failover del
+  leader, perdita del quorum, rifiuto del leader zombie. Suite totale: 6/6 verdi.
+
+
+################################################################################
+#  PASSATA 1 (2026-05-31) — INTEGRAZIONE PATTERN NEL FLUSSO PRINCIPALE          #
+################################################################################
+
+NB: la modifica al Generation Clock della Passata 1 (nextGeneration per-update)
+e' stata superata dalla Passata 2 [A] con la semantica corretta a epoca.
 
 --- AGGIUNTA: Rate-Limiting su /auth/login (Pattern Authenticator §5.3.2) ---
 File: security/LoginRateLimitFilter.java
@@ -146,21 +257,24 @@ Ho analizzato ogni file del backend. Di seguito lo stato reale di ogni pattern.
  PATTERN               STATO       FILE CHIAVE
 ────────────────────────────────────────────────────────────────────────────────
  JWT + BCrypt          OTTIMO      AuthController, JwtUtil, JwtAuthFilter
- Rate-Limiting         OTTIMO      LoginRateLimitFilter (Resilience4j, per IP)
- RBAC                  OTTIMO      UserRole enum nel JWT, SecurityAspect
- Reference Monitor     OTTIMO      SecurityAspect.java (AOP @Around)
+ Rate-Limiting         OTTIMO      LoginRateLimitFilter (Resilience4j + Caffeine)
+ RBAC                  OTTIMO      ruolo nel JWT, SecurityAspect
+ Reference Monitor     OTTIMO      SecurityAspect (AOP @Around) — unico meccanismo
  Remote Facade + DTO   OTTIMO      ProductService.buildProductDTO()
  CompletableFuture     OTTIMO      StoreService.fetchAllPricesForProducts()
+ Timeout               OTTIMO      StoreService.orTimeout() con fallback (§5.2)
  Circuit Breaker       OTTIMO      StoreService, Resilience4J programmatico
  Retry                 OTTIMO      StoreService, Resilience4J programmatico
  Serialized LOB        OTTIMO      PriceHistoryController, caricamento on-demand
  Session State         SUFFICIENTE AlertRepository (H2), gestione alert utente
  Request Pipeline      OTTIMO      PriceCheckScheduler -> RabbitMQ -> AlertConsumer
- Idempotent Receiver   OTTIMO      AlertConsumer + ProcessedMessageRepository
- Request Batch         OTTIMO      BatchWriteScheduler alimentato da PriceCheckScheduler
- Leader-Followers      OTTIMO      WorkerPool.java (Semaphore + BlockingQueue)
- HeartBeat             OTTIMO      WorkerPool chiama beat() ogni 5s per worker
- Generation Clock      OTTIMO      PriceCheckScheduler usa tryUpdate() con CAS loop
+ Idempotent Receiver   OTTIMO      AlertConsumer + purge a ritenzione
+ Request Batch         OTTIMO      requestId + disaggregazione (fasi 2,4,5)
+ Leader/Followers(thr) OTTIMO      WorkerPool.java — concorrenza thread (POSA2)
+ Leader-Followers(dist) OTTIMO     ClusterCoordinator — elezione + quorum (Cap.2)
+ Majority Quorum       OTTIMO      ClusterCoordinator.write() n/2+1 (§2.1)
+ HeartBeat             OTTIMO      HeartBeatService + monitor leader del cluster
+ Generation Clock      OTTIMO      epoca, incrementata all'elezione (§2.4)
 ────────────────────────────────────────────────────────────────────────────────
 
 
@@ -194,10 +308,16 @@ Ho analizzato ogni file del backend. Di seguito lo stato reale di ogni pattern.
    - Registra il messageId PRIMA del processamento (garanzia atomicita')
    - Gestisce sia alert che batch nello stesso pattern
 
-4. Leader-Followers in WorkerPool:
-   - Implementazione corretta con Semaphore(1)
-   - Promozione follower PRIMA di elaborare il task
-   - 4 thread con ruoli dinamici (non statici)
+4. Due Leader-Followers distinti (chiarezza sui pattern omonimi):
+   - WorkerPool = concorrenza thread (POSA2): Semaphore(1), promozione del
+     follower PRIMA di elaborare il task, 4 thread con ruoli dinamici.
+   - ClusterCoordinator = distribuito (ISD Cap.2): 3 nodi, elezione del nodo
+     piu' aggiornato, Majority Quorum sulle scritture, epoca via Generation
+     Clock, failure detection del leader via Heart Beat, rifiuto del leader
+     zombie. Verificato da 5 test deterministici.
+
+5. Resilienza a strati in StoreService (ISD §5.2-5.3):
+   Timeout (orTimeout) -> Retry -> Circuit Breaker, ciascuno isolato per store.
 
 
 ================================================================================
@@ -319,26 +439,56 @@ USE CASE 5 — Monitoraggio distribuito (Admin)
        "Batch write: N aggiornamenti prezzo in un'unica operazione"
     7. Mostrare il codice di WorkerPool.java con il Semaphore e la BlockingQueue
 
-  Pattern dimostrati: Leader-Followers, HeartBeat, Generation Clock, Request Batch
+  Pattern dimostrati: Leader/Followers (thread), HeartBeat, Request Batch
 
   Cosa dire al docente:
     "Il WorkerPool usa un Semaphore(1) per garantire che un solo thread alla volta
-     sia il 'leader'. Ogni worker invia un heartbeat ogni 5 secondi: se un worker
-     non risponde entro 30 secondi, HeartBeatService lo considera morto e lo rimuove.
-     Il Generation Clock garantisce l'ordine causale degli aggiornamenti: ogni ciclo
-     di price check genera un numero di generazione crescente; aggiornamenti obsoleti
-     (generazione piu' bassa) vengono scartati tramite CAS loop.
-     Il Request Batch accoda tutti i prezzi osservati e li scrive in un'unica
-     operazione ogni 2 minuti, riducendo le operazioni di I/O da N a 1."
+     sia il 'leader' (pattern di concorrenza POSA2). Ogni worker invia un heartbeat
+     ogni 5 secondi: se non risponde entro 30 secondi, HeartBeatService lo considera
+     morto. Il Request Batch accoda tutti i prezzi osservati (ognuno con un requestId)
+     e li scrive in un'unica operazione ogni 2 minuti, riducendo l'I/O da N a 1."
+
+
+USE CASE 6 — Cluster distribuito: elezione, quorum, leader zombie (Admin)
+  Il pattern Leader and Followers DISTRIBUITO (ISD Cap. 2) e' simulato da 3 nodi.
+
+  Cosa fare (tutto via API admin):
+    1. GET /api/admin/cluster
+       -> node-3 e' leader, epoca 1, 3 nodi vivi, quorum 2
+    2. POST /api/admin/cluster/write  body {"key":"x","value":"1"}
+       -> committed:true, acks:3 (>= quorum) — Majority Quorum (§2.1)
+    3. POST /api/admin/cluster/fail/node-3
+       -> nei log: "Leader node-3 e' caduto: nuova elezione"
+          GET /cluster mostra un nuovo leader con EPOCA 2 (Heart Beat -> elezione)
+    4. POST /api/admin/cluster/recover/node-3
+       -> node-3 rientra come CANDIDATE, ma con epoca 1 (obsoleta)
+    5. POST /api/admin/cluster/zombie/node-3  body {"key":"x","value":"z"}
+       -> committed:false, "rifiutato: epoca obsoleta (leader zombie)"
+          node-3 degrada a follower e adotta l'epoca corrente (§2.4)
+    6. (Demo quorum) fallire 2 nodi su 3 -> GET /cluster: leaderId null,
+       le scritture falliscono (sotto quorum non si decide nulla)
+
+  Pattern dimostrati: Leader-Followers (distribuito), Majority Quorum,
+                      Generation Clock (epoca), HeartBeat
+
+  Cosa dire al docente:
+    "Il cluster accetta scritture solo se c'e' un leader e se la maggioranza
+     (n/2+1 = 2 su 3) conferma la replica. Quando l'Heart Beat rileva la caduta
+     del leader, parte una nuova elezione: vince il nodo piu' aggiornato e l'epoca
+     (Generation Clock) viene incrementata. Se il vecchio leader rientra (zombie)
+     e prova a scrivere con la sua epoca obsoleta, i follower la rifiutano: lui
+     capisce di essere superato e degrada a follower."
 
 
 --- DOMANDE PROBABILI DEL DOCENTE E RISPOSTE ---
 
 D: "Perche' avete usato AOP per il Reference Monitor invece di Spring Security standard?"
-R: "Spring Security con @PreAuthorize lavora a livello di URL/controller. L'AOP con
-    @RequiresRole lavora a livello di metodo di servizio, indipendentemente da come il
-    metodo viene invocato (HTTP, scheduler, altro servizio). E' un Reference Monitor piu'
-    puro: intercetta OGNI invocazione, non solo quelle HTTP."
+R: "L'AOP con @RequiresRole lavora a livello di metodo di servizio, indipendentemente
+    da come il metodo viene invocato (HTTP, scheduler, altro servizio). E' un Reference
+    Monitor piu' puro: intercetta OGNI invocazione, non solo quelle HTTP. Abbiamo
+    UNIFORMATO tutto su questo unico meccanismo (prima AdminController usava @PreAuthorize
+    di Spring Security, ora anch'esso usa @RequiresRole): un solo punto di enforcement,
+    come richiede il pattern."
 
 D: "Come dimostrate che il Circuit Breaker funziona davvero?"
 R: "STORE003 ha un 20% di failure rate artificiale. Dopo 3 chiamate con piu' del 50%
@@ -347,10 +497,19 @@ R: "STORE003 ha un 20% di failure rate artificiale. Dopo 3 chiamate con piu' del
     si puo' vedere il contatore delle chiamate."
 
 D: "La Generation Clock e' davvero integrata nel flusso?"
-R: "Il servizio implementa correttamente il CAS loop per garantire l'ordine causale
-    degli aggiornamenti. Il tryUpdate() e' testabile via admin API. Nel contesto
-    di questa applicazione, il flusso di aggiornamento prezzi e' deterministico
-    (un solo scheduler), ma il servizio e' pronto per un ambiente multi-nodo."
+R: "Si', con la semantica corretta del PDF (§2.4): la generazione e' l'EPOCA del
+    cluster, incrementata SOLO all'elezione di un nuovo leader, non ad ogni
+    aggiornamento. Il ClusterCoordinator la usa per rifiutare un leader zombie con
+    epoca obsoleta (demo via /admin/cluster/zombie), e il PriceCheckScheduler timbra
+    con l'epoca corrente tutti gli aggiornamenti di un ciclo. C'e' un test
+    deterministico che verifica il rifiuto dell'aggiornamento obsoleto."
+
+D: "Leader-Followers: e' il pattern distribuito del Cap. 2 o quello dei thread?"
+R: "Entrambi, ma distinti e dichiarati come tali. Il ClusterCoordinator implementa
+    il Leader and Followers DISTRIBUITO del Cap. 2 (elezione, Majority Quorum, epoca,
+    failure detection via Heart Beat) su 3 nodi simulati. Il WorkerPool implementa
+    l'omonimo pattern di CONCORRENZA (POSA2), dove i thread si passano il ruolo di
+    leader per processare i task. Sono pattern diversi che condividono il nome."
 
 D: "Cosa garantisce che i messaggi RabbitMQ non vengano processati due volte?"
 R: "L'Idempotent Receiver: prima di ogni elaborazione, AlertConsumer verifica in DB
@@ -377,6 +536,9 @@ R: "Scelta didattica per semplificare il setup e permettere l'avvio zero-config.
 [ ] Avere il file WorkerPool.java aperto nell'IDE per mostrare il codice
 [ ] Per dimostrare il Rate-Limiting: preparare un curl o script che fa 6 POST
     consecutivi a /api/auth/login con credenziali errate dallo stesso IP
+[ ] Per il cluster (Use Case 6): preparare curl per /admin/cluster, /cluster/write,
+    /cluster/fail/node-3, /cluster/recover/node-3, /cluster/zombie/node-3
+[ ] (Opzionale) Eseguire i test prima della presentazione: ./mvnw test (6/6 verdi)
 
 
 --- CREDENZIALI TEST ---
@@ -395,18 +557,24 @@ COERENZA ARCHITETTURALE:   ALTA
   isolati ma si compongono: CompletableFuture alimenta il Remote Facade,
   la Pipeline usa l'Idempotent Receiver, il Reference Monitor protegge tutto.
 
-COMPLETEZZA DEI PATTERN:   OTTIMA (16/16 pienamente funzionanti)
-  Tutti i pattern sono implementati e integrati nel flusso principale.
-  Rate-Limiting aggiunto su /auth/login (Resilience4j, per IP).
-  HeartBeat integrato: i worker inviano beat() ogni 5s automaticamente.
-  Request Batch integrato: PriceCheckScheduler alimenta la coda ad ogni ciclo.
-  Generation Clock integrato: tryUpdate() con CAS loop in PriceCheckScheduler.
+COMPLETEZZA DEI PATTERN:   OTTIMA (allineata a ISD.pdf)
+  Tutti i pattern sono implementati e integrati nel flusso principale, dopo un
+  confronto sistematico con gli appunti del corso (Passata 2, 2026-06-20):
+  - Generation Clock con semantica corretta a EPOCA (§2.4).
+  - Timeout REALE sulle chiamate store (§5.2), prima dichiarato ma assente.
+  - Leader-Followers DISTRIBUITO del Cap. 2 implementato (elezione + Majority
+    Quorum + epoca + Heart Beat), distinto dal Leader/Followers dei thread.
+  - Request Batch con requestId e disaggregazione reale (§1.2).
+  - Idempotent Receiver con purge a ritenzione (§5).
+  - Reference Monitor unificato su un solo meccanismo (@RequiresRole).
 
 QUALITA' DEL CODICE:       ALTA
-  Ogni classe ha Javadoc che spiega esattamente il pattern implementato.
+  Ogni classe ha Javadoc che spiega esattamente il pattern implementato, con
+  riferimento alla sezione ISD.pdf corrispondente.
   Naming conventions coerenti, separazione delle responsabilita' rispettata.
   Uso di @Value per configurazione esternalizzata, @ConditionalOnProperty per
-  feature flags (RabbitMQ opzionale).
+  feature flags (RabbitMQ opzionale). Suite di test 6/6 verde, con copertura
+  deterministica della logica di consenso del cluster.
 
 PRESENTABILITA':           ALTA
   Il frontend e' pulito e funzionale. Il backend ha log verbosi che rendono

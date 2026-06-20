@@ -56,6 +56,11 @@ public class JwtUtil {
         return extractClaims(token).get("role", String.class);
     }
 
+    /** Durata di validita' del token in millisecondi (da configurazione). */
+    public long getExpirationMs() {
+        return expirationMs;
+    }
+
     public boolean isTokenValid(String token) {
         try {
             Claims claims = extractClaims(token);

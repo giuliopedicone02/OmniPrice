@@ -7,10 +7,14 @@ import com.unict.dmi.omniprice.service.AlertService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +36,10 @@ public class AlertConsumer {
 
     private final ProcessedMessageRepository processedMessageRepository;
     private final AlertService alertService;
+
+    // Finestra di ritenzione del registro di idempotenza (in minuti).
+    @Value("${omniprice.idempotency.retention-minutes:60}")
+    private long retentionMinutes;
 
     public AlertConsumer(ProcessedMessageRepository processedMessageRepository,
                          AlertService alertService) {
@@ -76,8 +84,39 @@ public class AlertConsumer {
         processedMessageRepository.save(new ProcessedMessage(messageId, "BATCH_WRITE"));
 
         String batchId = (String) message.get("batchId");
-        log.info("Elaborazione batch write: {}", batchId);
-        // In produzione: scrittura ottimizzata in batch sul DB
+
+        // === Request Batch (ISD §1.2 fasi 4-5): disaggregazione e smistamento ===
+        // Il Batch Processor riceve il lotto aggregato, lo disaggrega nelle richieste
+        // originali e processa ciascuna identificandola tramite il suo requestId.
+        int applied = 0;
+        Object data = message.get("data");
+        if (data instanceof List<?> batch) {
+            for (Object item : batch) {
+                if (item instanceof Map<?, ?> update) {
+                    log.debug("Batch {} - richiesta {}: prodotto {} su store {} = {}€",
+                            batchId, update.get("requestId"), update.get("productId"),
+                            update.get("storeId"), update.get("price"));
+                    applied++;
+                }
+            }
+        }
+        log.info("Batch write {} elaborato: {} richieste disaggregate e applicate", batchId, applied);
+    }
+
+    /**
+     * Pattern Idempotent Receiver (ISD §5): i messaggi gia' elaborati vengono
+     * conservati solo per una finestra di ritenzione, poi cancellati. Senza questa
+     * pulizia periodica il registro crescerebbe indefinitamente.
+     */
+    @Scheduled(cron = "${omniprice.idempotency.purge-cron:0 0 * * * *}")
+    @Transactional
+    public void purgeProcessedMessages() {
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(retentionMinutes);
+        long removed = processedMessageRepository.deleteByProcessedAtBefore(cutoff);
+        if (removed > 0) {
+            log.info("Idempotent Receiver: {} messaggi piu' vecchi di {} min purgati dal registro",
+                    removed, retentionMinutes);
+        }
     }
 
     private void processAlertTriggered(Map<String, Object> message) {
@@ -88,7 +127,7 @@ public class AlertConsumer {
 
         alertService.triggerAlert(alertId, storeName, triggeredPrice);
 
-        log.info("Alert elaborato: {} - prodotto '{}' a {:.2f}€ su {}",
-                alertId, productName, triggeredPrice, storeName);
+        log.info("Alert elaborato: {} - prodotto '{}' a {}€ su {}",
+                alertId, productName, String.format("%.2f", triggeredPrice), storeName);
     }
 }

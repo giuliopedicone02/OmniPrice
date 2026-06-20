@@ -52,19 +52,22 @@ public class PriceCheckScheduler {
         List<AlertDTO> activeAlerts = alertService.getActiveAlerts();
         if (activeAlerts.isEmpty()) return;
 
-        log.info("Price check: verifica {} alert attivi", activeAlerts.size());
+        // === Generation Clock (epoca): tutti gli aggiornamenti di QUESTO ciclo
+        // condividono l'epoca corrente del cluster. L'epoca cambia solo al cambio
+        // di leader (nuova elezione), non ad ogni aggiornamento (ISD §2.4). ===
+        long generation = generationClockService.getCurrentGeneration();
+
+        log.info("Price check: verifica {} alert attivi (epoca {})", activeAlerts.size(), generation);
 
         for (AlertDTO alert : activeAlerts) {
-            checkAlert(alert);
+            checkAlert(alert, generation);
         }
     }
 
-    private void checkAlert(AlertDTO alert) {
-        // === Generation Clock: garantisce ordine causale degli aggiornamenti ===
-        // Genera un numero di generazione monotono per questo ciclo di controllo.
-        // Se un aggiornamento piu' recente (gen piu' alta) ha gia' processato
-        // questo prodotto, questo aggiornamento e' obsoleto e viene scartato.
-        long generation = generationClockService.nextGeneration();
+    private void checkAlert(AlertDTO alert, long generation) {
+        // Applica l'aggiornamento solo se l'epoca non e' obsoleta: un aggiornamento
+        // proveniente da un leader con epoca inferiore a quella gia' applicata
+        // sul prodotto (leader "zombie") viene scartato.
         if (!generationClockService.tryUpdate(alert.getProductId(), generation)) {
             log.debug("Aggiornamento obsoleto scartato per prodotto {} (gen {})",
                     alert.getProductId(), generation);
