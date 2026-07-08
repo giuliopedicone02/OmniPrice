@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/logo.png" alt="OmniPrice" width="340">
+
 # OmniPrice
 
 **Sistema distribuito per il tracciamento dei prezzi su più piattaforme e‑commerce**
@@ -393,7 +395,7 @@ La suite include i test del `ClusterCoordinator` (elezione del leader, quorum, r
 ## Autori
 
 - **Giulio Pedicone** — [@giuliopedicone02](https://github.com/giuliopedicone02)
-- **Francesco Prospero Antonio Virzì**
+- **Francesco Prospero Antonio Virzì** — [@Ciccio1307](https://github.com/Ciccio1307)
 
 Progetto realizzato per il corso di *Ingegneria dei Sistemi Distribuiti*, Corso di Laurea Magistrale in Informatica, Università degli Studi di Catania.
 
