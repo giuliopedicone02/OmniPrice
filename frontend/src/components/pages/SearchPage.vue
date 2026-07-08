@@ -2,13 +2,13 @@
   <div>
 
     <!-- Hero search -->
-    <div class="bg-gradient-to-br from-violet-700 via-indigo-700 to-indigo-800 py-10 px-4">
+    <div class="bg-gradient-to-br from-teal-700 via-emerald-700 to-emerald-800 py-10 px-4">
       <div class="max-w-3xl mx-auto text-center">
         <h1 class="text-3xl font-bold text-white mb-2">Trova il miglior prezzo</h1>
-        <p class="text-indigo-200 text-sm mb-6">Confrontiamo 4 store in tempo reale per te</p>
+        <p class="text-emerald-200 text-sm mb-6">Confrontiamo 4 store in tempo reale per te</p>
 
         <!-- Search bar -->
-        <div class="flex gap-2 bg-white rounded-2xl p-2 shadow-xl shadow-indigo-900/20">
+        <div class="flex gap-2 bg-white rounded-2xl p-2 shadow-xl shadow-emerald-900/20">
           <div class="flex-1 flex items-center gap-3 px-3">
             <svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -33,7 +33,7 @@
           <button
             @click="handleSearch"
             :disabled="isLoading"
-            class="px-6 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl disabled:opacity-60 transition-all flex items-center gap-2"
+            class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl disabled:opacity-60 transition-all flex items-center gap-2"
           >
             <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -65,7 +65,7 @@
         <div>
           <h2 class="text-lg font-bold text-slate-900">
             {{ filteredAndSorted.length }} risultati
-            <span class="text-slate-400 font-normal text-base">per "<span class="text-indigo-600 font-semibold">{{ lastQuery }}</span>"</span>
+            <span class="text-slate-400 font-normal text-base">per "<span class="text-emerald-600 font-semibold">{{ lastQuery }}</span>"</span>
           </h2>
           <p class="text-sm text-slate-500 mt-0.5">Prezzi aggiornati in tempo reale da 4 store</p>
         </div>
@@ -76,7 +76,7 @@
             <button
               @click="activeCategory = ''"
               class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border"
-              :class="activeCategory === '' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'"
+              :class="activeCategory === '' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'"
             >
               Tutte
             </button>
@@ -85,14 +85,14 @@
               :key="cat"
               @click="activeCategory = activeCategory === cat ? '' : cat"
               class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border"
-              :class="activeCategory === cat ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'"
+              :class="activeCategory === cat ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'"
             >
               {{ cat }}
             </button>
           </div>
 
           <!-- Sort -->
-          <select v-model="sortBy" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+          <select v-model="sortBy" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
             <option value="name">Nome</option>
             <option value="price_asc">Prezzo ↑</option>
             <option value="price_desc">Prezzo ↓</option>
@@ -104,7 +104,7 @@
             <button
               @click="viewMode = 'grid'"
               class="p-1.5 rounded transition-all"
-              :class="viewMode === 'grid' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'"
+              :class="viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -113,7 +113,7 @@
             <button
               @click="viewMode = 'list'"
               class="p-1.5 rounded transition-all"
-              :class="viewMode === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'"
+              :class="viewMode === 'list' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -134,7 +134,7 @@
             <div class="flex items-start justify-between mb-3 gap-2">
               <h3 class="font-bold text-slate-900 text-base leading-snug">{{ product.name }}</h3>
               <div class="flex flex-col items-end gap-1 flex-shrink-0">
-                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100">
+                <span class="text-xs font-medium bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">
                   {{ product.category }}
                 </span>
                 <span v-if="bestDiscount(product) > 0" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">
@@ -181,7 +181,7 @@
             </div>
             <router-link
               :to="`/product/${product.id}`"
-              class="flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
+              class="flex items-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
             >
               Dettagli
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -204,7 +204,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-start gap-2 mb-1">
                 <h3 class="font-bold text-slate-900 text-base leading-snug">{{ product.name }}</h3>
-                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100 flex-shrink-0">{{ product.category }}</span>
+                <span class="text-xs font-medium bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100 flex-shrink-0">{{ product.category }}</span>
                 <span v-if="bestDiscount(product) > 0" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100 flex-shrink-0">-{{ bestDiscount(product) }}% OFF</span>
               </div>
               <p v-if="product.description" class="text-xs text-slate-500 mb-3">{{ product.description }}</p>
@@ -216,7 +216,7 @@
                   <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       class="h-full rounded-full"
-                      :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-indigo-200'"
+                      :class="price.finalPrice === product.minPrice ? 'bg-emerald-400' : 'bg-emerald-200'"
                       :style="{ width: priceBarWidth(price.finalPrice, product) + '%' }"
                     ></div>
                   </div>
@@ -235,7 +235,7 @@
               <p class="text-2xl font-bold text-emerald-600 tabular-nums mb-3">{{ product.minPrice?.toFixed(2) }}€</p>
               <router-link
                 :to="`/product/${product.id}`"
-                class="flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition-colors shadow-sm whitespace-nowrap"
+                class="flex items-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl transition-colors shadow-sm whitespace-nowrap"
               >
                 Vedi dettagli
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -268,7 +268,7 @@
       <!-- Nessun risultato (dopo filtro categoria) -->
       <div v-else-if="results.length > 0 && filteredAndSorted.length === 0" class="text-center py-16">
         <p class="text-slate-500 font-medium mb-2">Nessun prodotto nella categoria "{{ activeCategory }}"</p>
-        <button @click="activeCategory = ''" class="text-sm text-indigo-600 font-medium hover:underline">Mostra tutti i risultati</button>
+        <button @click="activeCategory = ''" class="text-sm text-emerald-600 font-medium hover:underline">Mostra tutti i risultati</button>
       </div>
 
       <!-- Nessun risultato dalla ricerca -->

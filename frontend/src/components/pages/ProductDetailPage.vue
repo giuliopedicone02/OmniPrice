@@ -2,7 +2,7 @@
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Back -->
-    <router-link to="/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-indigo-600 transition-colors mb-6 group">
+    <router-link to="/" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-emerald-600 transition-colors mb-6 group">
       <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
@@ -30,7 +30,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
         <div class="flex flex-wrap gap-4 justify-between">
           <div class="flex-1 min-w-0">
-            <span class="inline-block text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-0.5 rounded-full mb-3">
+            <span class="inline-block text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-0.5 rounded-full mb-3">
               {{ product.category }}
             </span>
             <h1 class="text-2xl font-bold text-slate-900 mb-2">{{ product.name }}</h1>
@@ -48,7 +48,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-50">
           <h2 class="font-bold text-slate-900 flex items-center gap-2">
-            <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             Confronto prezzi store
@@ -144,7 +144,7 @@
                 type="number"
                 step="0.01"
                 :placeholder="product.minPrice?.toFixed(2)"
-                class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-slate-50 focus:bg-white transition-all"
+                class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-slate-50 focus:bg-white transition-all"
               >
             </div>
 
@@ -154,7 +154,7 @@
                 v-for="pct in [5, 10, 15]"
                 :key="pct"
                 @click="alertTargetPrice = +(product.minPrice * (1 - pct/100)).toFixed(2)"
-                class="flex-1 text-xs py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-medium"
+                class="flex-1 text-xs py-1.5 border border-slate-200 rounded-lg text-slate-600 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-medium"
               >
                 -{{ pct }}%
               </button>
@@ -193,7 +193,7 @@
         <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-bold text-slate-900 flex items-center gap-2">
-              <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
               </svg>
               Storico Prezzi
@@ -201,7 +201,7 @@
             <button
               v-if="!historyLoaded && !historyLoading"
               @click="loadHistory"
-              class="text-xs font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
+              class="text-xs font-semibold text-emerald-600 border border-emerald-200 hover:bg-emerald-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -220,7 +220,7 @@
 
           <div v-if="historyLoading" class="flex items-center justify-center py-12">
             <div class="text-center">
-              <svg class="animate-spin w-8 h-8 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>

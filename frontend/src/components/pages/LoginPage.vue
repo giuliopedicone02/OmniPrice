@@ -2,7 +2,7 @@
   <div class="min-h-screen flex">
 
     <!-- Pannello sinistro: branding -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-violet-700 via-indigo-700 to-indigo-800 flex-col justify-between p-12 relative overflow-hidden">
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-teal-700 via-emerald-700 to-emerald-800 flex-col justify-between p-12 relative overflow-hidden">
       <div class="absolute -top-24 -left-24 w-96 h-96 bg-white/5 rounded-full"></div>
       <div class="absolute -bottom-32 -right-16 w-[500px] h-[500px] bg-white/5 rounded-full"></div>
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full"></div>
@@ -20,11 +20,11 @@
         <h1 class="text-4xl font-bold text-white leading-tight mb-4">
           Confronta i prezzi su tutti gli store in un click
         </h1>
-        <p class="text-indigo-200 text-lg leading-relaxed mb-8">
+        <p class="text-emerald-200 text-lg leading-relaxed mb-8">
           4 store monitorati in tempo reale. Alert automatici quando il prezzo scende. Storico completo per ogni prodotto.
         </p>
         <div class="space-y-3">
-          <div v-for="feature in features" :key="feature" class="flex items-center gap-3 text-indigo-100">
+          <div v-for="feature in features" :key="feature" class="flex items-center gap-3 text-emerald-100">
             <div class="w-5 h-5 rounded-full bg-green-400/30 flex items-center justify-center flex-shrink-0">
               <svg class="w-3 h-3 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -35,9 +35,6 @@
         </div>
       </div>
 
-      <div class="text-indigo-300 text-sm relative">
-        Sistema distribuito · Spring Boot + Vue 3
-      </div>
     </div>
 
     <!-- Pannello destro: form -->
@@ -46,7 +43,7 @@
 
         <!-- Logo mobile -->
         <div class="flex items-center gap-2 mb-8 lg:hidden">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-600 to-emerald-600 flex items-center justify-center">
             <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
@@ -87,7 +84,7 @@
                   required
                   autocomplete="email"
                   placeholder="mario@example.com"
-                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                 >
               </div>
 
@@ -100,7 +97,7 @@
                     required
                     autocomplete="current-password"
                     placeholder="••••••••"
-                    class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white pr-12"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white pr-12"
                   >
                   <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                     <svg v-if="!showPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,9 +112,9 @@
               </div>
 
               <!-- Credenziali demo -->
-              <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3">
-                <p class="text-xs font-semibold text-indigo-700 mb-1.5">Account demo precompilato</p>
-                <div class="space-y-0.5 text-xs text-indigo-600">
+              <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+                <p class="text-xs font-semibold text-emerald-700 mb-1.5">Account demo precompilato</p>
+                <div class="space-y-0.5 text-xs text-emerald-600">
                   <p><span class="font-medium">Email:</span> mario@example.com</p>
                   <p><span class="font-medium">Password:</span> PasswordSuperSicura123!</p>
                 </div>
@@ -133,7 +130,7 @@
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-200 focus:outline-none disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+                class="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-emerald-200 focus:outline-none disabled:opacity-60 transition-all flex items-center justify-center gap-2"
               >
                 <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -158,7 +155,7 @@
                   required
                   autocomplete="name"
                   placeholder="Mario Rossi"
-                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                 >
               </div>
 
@@ -170,7 +167,7 @@
                   required
                   autocomplete="email"
                   placeholder="mario@example.com"
-                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                 >
               </div>
 
@@ -183,7 +180,7 @@
                     required
                     autocomplete="new-password"
                     placeholder="Min. 8 caratteri"
-                    class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white pr-12"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white pr-12"
                   >
                   <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                     <svg v-if="!showPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -204,7 +201,7 @@
                     type="button"
                     @click="regRole = 'STANDARD'"
                     class="py-2.5 px-3 rounded-xl border text-sm font-medium transition-all"
-                    :class="regRole === 'STANDARD' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'"
+                    :class="regRole === 'STANDARD' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'"
                   >
                     Standard
                     <p class="text-xs font-normal mt-0.5 opacity-70">Gratuito</p>
@@ -231,7 +228,7 @@
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-200 focus:outline-none disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+                class="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-emerald-200 focus:outline-none disabled:opacity-60 transition-all flex items-center justify-center gap-2"
               >
                 <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
