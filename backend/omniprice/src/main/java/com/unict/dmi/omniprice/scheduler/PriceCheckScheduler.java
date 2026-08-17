@@ -47,6 +47,12 @@ public class PriceCheckScheduler {
         this.batchWriteScheduler = batchWriteScheduler;
     }
 
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    public void onApplicationReady() {
+        log.info("Price check iniziale all'avvio dell'applicazione...");
+        checkPrices();
+    }
+
     @Scheduled(cron = "${omniprice.scheduler.price-check-cron:0 */5 * * * *}")
     public void checkPrices() {
         List<AlertDTO> activeAlerts = alertService.getActiveAlerts();

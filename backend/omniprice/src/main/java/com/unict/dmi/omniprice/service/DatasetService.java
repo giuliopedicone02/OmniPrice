@@ -105,6 +105,35 @@ public class DatasetService {
         return Optional.ofNullable(priceHistories.get(productId));
     }
 
+    /**
+     * Modifica temporanea in-memory del prezzo di un prodotto (per simulazione demo/alert).
+     */
+    public synchronized boolean updatePriceInMemory(String productId, String storeId, double newPrice) {
+        Map<String, StorePriceEntry> byStore = pricesByProductAndStore.get(productId);
+        if (byStore != null) {
+            if (storeId != null && byStore.containsKey(storeId)) {
+                StorePriceEntry entry = byStore.get(storeId);
+                entry.finalPrice = newPrice;
+                entry.price = newPrice;
+                return true;
+            } else {
+                for (StorePriceEntry entry : byStore.values()) {
+                    entry.finalPrice = newPrice;
+                    entry.price = newPrice;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Ripristina tutti i prezzi e i cataloghi ricaricandoli dai file JSON originali.
+     */
+    public synchronized void resetDataset() {
+        loadDataset();
+    }
+
     // ===== Caricamento JSON =====
 
     private void loadProducts() throws IOException {
