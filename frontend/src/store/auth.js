@@ -14,10 +14,20 @@ export const useAuthStore = defineStore('auth', {
                 this.user = response.data.user
                 localStorage.setItem('token', this.token)
                 localStorage.setItem('user', JSON.stringify(this.user))
-                return true
+                return { success: true }
             } catch (error) {
                 console.error('Errore di login:', error)
-                return false
+                const status = error.response?.status
+                const data = error.response?.data || {}
+                const message = data.error || data.message
+                return {
+                    success: false,
+                    status: status,
+                    isRateLimited: status === 429,
+                    retryAfterSeconds: data.retryAfterSeconds,
+                    penaltyLevel: data.penaltyLevel,
+                    message: message
+                }
             }
         },
         async register(name, email, password, role = 'STANDARD') {
@@ -27,10 +37,14 @@ export const useAuthStore = defineStore('auth', {
                 this.user = response.data.user
                 localStorage.setItem('token', this.token)
                 localStorage.setItem('user', JSON.stringify(this.user))
-                return true
+                return { success: true }
             } catch (error) {
                 console.error('Errore di registrazione:', error)
-                return false
+                return {
+                    success: false,
+                    status: error.response?.status,
+                    message: error.response?.data?.message || 'Registrazione fallita.'
+                }
             }
         },
         logout() {

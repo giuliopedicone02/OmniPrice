@@ -25,6 +25,12 @@ const routes = [
         name: 'Alerts',
         component: () => import('../components/pages/AlertPage.vue'),
         meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: () => import('../components/pages/AdminPage.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
     }
 ]
 
@@ -37,6 +43,9 @@ router.beforeEach((to) => {
     const authStore = useAuthStore()
     if (to.meta.requiresAuth && !authStore.token) {
         return '/login'
+    }
+    if (to.meta.requiresAdmin && authStore.user?.role !== 'ADMIN') {
+        return '/'
     }
     return true
 })

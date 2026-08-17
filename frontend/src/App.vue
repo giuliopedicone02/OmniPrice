@@ -41,6 +41,17 @@
                   {{ alertsCount }}
                 </span>
               </router-link>
+              <router-link
+                v-if="userRole === 'ADMIN'"
+                to="/admin"
+                class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all flex items-center gap-1.5"
+                :class="{ 'text-indigo-600 bg-indigo-50 font-bold': $route.path === '/admin' }"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Cluster & Admin
+              </router-link>
             </nav>
           </div>
 
@@ -103,6 +114,17 @@
         <span v-if="alertsCount > 0" class="absolute top-1.5 right-1/4 bg-emerald-600 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
           {{ alertsCount }}
         </span>
+      </router-link>
+      <router-link
+        v-if="userRole === 'ADMIN'"
+        to="/admin"
+        class="flex-1 flex flex-col items-center py-2.5 gap-1 text-xs font-medium transition-colors"
+        :class="$route.path === '/admin' ? 'text-indigo-600 font-bold' : 'text-slate-500'"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        Admin
       </router-link>
       <button
         @click="handleLogout"

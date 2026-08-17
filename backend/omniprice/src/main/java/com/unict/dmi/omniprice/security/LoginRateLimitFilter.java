@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
 
 /**
  * Filtro Rate-Limiting per l'endpoint /auth/login.
@@ -27,8 +28,10 @@ import java.time.Duration;
  * a processare la richiesta, prima dell'Authenticator, per bloccare attacchi
  * DoS prima che consumino risorse CPU (hash Scrypt/BCrypt e' intenzionalmente lento).
  *
- * Un RateLimiter per IP sorgente: ogni IP ha al massimo
- * {@code limitForPeriod} tentativi ogni {@code refreshPeriodSeconds} secondi.
+ * Supporta Exponential Backoff:
+ * - Base iniziale: {@code baseRefreshPeriodSeconds} (30s)
+ * - Ad ogni blocco consecutivo, la durata raddoppia (30s -> 60s -> 120s -> 240s -> 300s max)
+ * - Fino a un tetto massimo di {@code maxPenaltySeconds} (300s = 5 minuti).
  */
 @Component
 public class LoginRateLimitFilter extends OncePerRequestFilter {
@@ -39,24 +42,27 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     @Value("${omniprice.ratelimit.login.limit-for-period:5}")
     private int limitForPeriod;
 
-    @Value("${omniprice.ratelimit.login.refresh-period-seconds:60}")
-    private int refreshPeriodSeconds;
+    @Value("${omniprice.ratelimit.login.refresh-period-seconds:30}")
+    private int baseRefreshPeriodSeconds;
 
-    /*
-     * Se true, si fida dell'header X-Forwarded-For (solo dietro un reverse proxy
-     * FIDATO). Se false (default), usa l'IP reale della connessione: questo evita
-     * che un client possa aggirare il rate limit falsificando X-Forwarded-For.
-     */
+    @Value("${omniprice.ratelimit.login.max-penalty-seconds:300}")
+    private int maxPenaltySeconds;
+
     @Value("${omniprice.ratelimit.login.trust-forwarded-header:false}")
     private boolean trustForwardedHeader;
 
-    /*
-     * Un RateLimiter per ogni IP sorgente, in una cache con eviction:
-     * expireAfterAccess evita la crescita illimitata della mappa (memory leak)
-     * quando arrivano richieste da molti IP diversi nel tempo.
+    /**
+     * Stato del rate limiter per un dato IP.
      */
-    private final Cache<String, RateLimiter> limitersByIp = Caffeine.newBuilder()
-            .expireAfterAccess(Duration.ofMinutes(10))
+    private static class IpRateLimitState {
+        RateLimiter rateLimiter;
+        int consecutiveBlocks = 0;
+        Instant blockExpiresAt = Instant.MIN;
+        Instant lastAttempt = Instant.now();
+    }
+
+    private final Cache<String, IpRateLimitState> stateByIp = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(15))
             .maximumSize(100_000)
             .build();
 
@@ -72,36 +78,84 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = resolveClientIp(request);
-        RateLimiter limiter = limitersByIp.get(clientIp, this::createLimiter);
+        IpRateLimitState state = stateByIp.get(clientIp, k -> new IpRateLimitState());
+        Instant now = Instant.now();
 
-        boolean permitted = limiter.acquirePermission();
+        synchronized (state) {
+            // Se l'utente e' attualmente in cooldown/blocco attivo:
+            if (now.isBefore(state.blockExpiresAt)) {
+                long remainingSeconds = Duration.between(now, state.blockExpiresAt).toSeconds() + 1;
+                log.warn("Tentativo di login durante cooldown per IP: {} (Mancano {}s)", clientIp, remainingSeconds);
+                sendTooManyRequestsResponse(response, remainingSeconds, state.consecutiveBlocks);
+                return;
+            }
 
-        if (!permitted) {
-            log.warn("Rate limit superato per IP: {} su {}", clientIp, LOGIN_PATH);
-            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(
-                    "{\"error\":\"Troppi tentativi di login. Riprova tra " + refreshPeriodSeconds + " secondi.\"}"
-            );
-            return;
+            // Se e' passato molto tempo dall'ultimo blocco (> 10 minuti di inattivita'), azzera la penalita' progressiva
+            if (state.blockExpiresAt != Instant.MIN && now.isAfter(state.blockExpiresAt.plus(Duration.ofMinutes(10)))) {
+                state.consecutiveBlocks = 0;
+            }
+
+            // Inizializza o aggiorna il RateLimiter di Resilience4J
+            if (state.rateLimiter == null) {
+                state.rateLimiter = createLimiter(clientIp, baseRefreshPeriodSeconds);
+            }
+
+            boolean permitted = state.rateLimiter.acquirePermission();
+
+            if (!permitted) {
+                state.consecutiveBlocks++;
+                // Calcolo backoff esponenziale: 30 * 2^(blocks-1) -> 30, 60, 120, 240, 300 (max)
+                long backoff = (long) baseRefreshPeriodSeconds * (1L << Math.min(state.consecutiveBlocks - 1, 10));
+                int penaltySeconds = (int) Math.min((long) maxPenaltySeconds, backoff);
+
+                state.blockExpiresAt = now.plusSeconds(penaltySeconds);
+                // Crea un nuovo limiter tarato sulla nuova finestra di penalita'
+                state.rateLimiter = createLimiter(clientIp, penaltySeconds);
+
+                log.warn("Rate limit superato per IP: {} su {} (Blocco #{} per {}s)",
+                        clientIp, LOGIN_PATH, state.consecutiveBlocks, penaltySeconds);
+
+                sendTooManyRequestsResponse(response, penaltySeconds, state.consecutiveBlocks);
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);
+
+        // Se il login ha avuto successo (status 200 OK), resetta i livelli di penalità e il limiter per questo IP
+        if (response.getStatus() == HttpStatus.OK.value()) {
+            synchronized (state) {
+                state.consecutiveBlocks = 0;
+                state.blockExpiresAt = Instant.MIN;
+                state.rateLimiter = createLimiter(clientIp, baseRefreshPeriodSeconds);
+                log.info("Login riuscito per IP: {}. Reset dei livelli di rate limit e timer a {}s.", clientIp, baseRefreshPeriodSeconds);
+            }
+        }
     }
 
-    private RateLimiter createLimiter(String ip) {
+    private void sendTooManyRequestsResponse(HttpServletResponse response,
+                                             long waitSeconds,
+                                             int penaltyLevel) throws IOException {
+        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+        response.setHeader("Retry-After", String.valueOf(waitSeconds));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(String.format(
+                "{\"error\":\"Troppi tentativi di login. Riprova tra %d secondi.\",\"retryAfterSeconds\":%d,\"penaltyLevel\":%d}",
+                waitSeconds, waitSeconds, penaltyLevel
+        ));
+    }
+
+    private RateLimiter createLimiter(String ip, int periodSeconds) {
         RateLimiterConfig config = RateLimiterConfig.custom()
                 .limitForPeriod(limitForPeriod)
-                .limitRefreshPeriod(Duration.ofSeconds(refreshPeriodSeconds))
+                .limitRefreshPeriod(Duration.ofSeconds(periodSeconds))
                 .timeoutDuration(Duration.ZERO)
                 .build();
 
-        return RateLimiterRegistry.of(config).rateLimiter("login-" + ip);
+        return RateLimiterRegistry.of(config).rateLimiter("login-" + ip + "-" + periodSeconds);
     }
 
     private String resolveClientIp(HttpServletRequest request) {
-        // X-Forwarded-For e' falsificabile dal client: lo si usa solo se esplicitamente
-        // configurato (cioe' quando c'e' un reverse proxy fidato che lo imposta).
         if (trustForwardedHeader) {
             String forwarded = request.getHeader("X-Forwarded-For");
             if (forwarded != null && !forwarded.isBlank()) {

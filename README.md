@@ -287,7 +287,8 @@ Il frontend è disponibile su **http://localhost:5173**.
 ### Avvio con un solo comando
 Dalla root del progetto:
 ```bash
-./script.sh   # avvia backend e frontend insieme
+./script.sh            # avvia backend (in-process) e frontend insieme
+./script-rabbitmq.sh   # avvia Docker (RabbitMQ), backend (con RabbitMQ attivo) e frontend
 ```
 
 ---

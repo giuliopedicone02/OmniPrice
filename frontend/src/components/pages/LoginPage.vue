@@ -120,7 +120,52 @@
                 </div>
               </div>
 
-              <div v-if="errorMessage" class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <!-- Rate Limiter Alert Box -->
+              <transition name="slide">
+                <div v-if="isRateLimited" class="bg-red-50 border-2 border-red-400 rounded-xl p-4 shadow-sm">
+                  <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-red-100 border border-red-300 flex items-center justify-center flex-shrink-0 text-red-600 font-bold text-lg">
+                      🛡️
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-1.5">
+                          <p class="text-xs font-bold uppercase tracking-wider text-red-800">
+                            Rate Limiter Attivato
+                          </p>
+                          <span v-if="penaltyLevel > 1" class="text-xs font-bold bg-amber-200 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded">
+                            Livello {{ penaltyLevel }} (Raddoppio)
+                          </span>
+                        </div>
+                        <span class="text-xs font-bold bg-red-200 text-red-800 px-2 py-0.5 rounded-full">HTTP 429</span>
+                      </div>
+                      
+                      <!-- Dynamic countdown display -->
+                      <div class="mt-2 flex items-baseline gap-2">
+                        <p class="text-sm text-red-900 font-medium">Troppi tentativi. Riprova tra:</p>
+                        <span class="text-lg font-extrabold font-mono text-red-600 bg-white border border-red-200 px-2.5 py-0.5 rounded-lg shadow-inner">
+                          {{ countdownSeconds }}s
+                        </span>
+                      </div>
+
+                      <!-- Visual progress bar -->
+                      <div class="w-full bg-red-100 rounded-full h-1.5 mt-2.5 overflow-hidden">
+                        <div
+                          class="bg-red-500 h-1.5 rounded-full transition-all duration-1000 ease-linear"
+                          :style="{ width: `${(countdownSeconds / initialCountdown) * 100}%` }"
+                        ></div>
+                      </div>
+
+                      <p class="text-xs text-red-700 mt-2 leading-relaxed">
+                        <strong>Pattern Authenticator & Exponential Backoff:</strong> Base iniziale 30s; ad ogni blocco consecutivo il tempo di attesa raddoppia (30s ➔ 60s ➔ 120s ➔ 240s ➔ max 5 min) per scoraggiare attacchi ripetuti.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </transition>
+
+              <!-- Standard Error Message -->
+              <div v-if="errorMessage && !isRateLimited" class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 <svg class="w-4 h-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -129,14 +174,15 @@
 
               <button
                 type="submit"
-                :disabled="isLoading"
+                :disabled="isLoading || isRateLimited"
                 class="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-emerald-200 focus:outline-none disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+                :class="{ 'from-red-600 to-red-700 shadow-red-200': isRateLimited }"
               >
                 <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
-                {{ isLoading ? 'Accesso in corso...' : 'Accedi' }}
+                {{ isLoading ? 'Accesso in corso...' : (isRateLimited ? `Sblocco tra ${countdownSeconds}s...` : 'Accedi') }}
               </button>
             </form>
           </div>
@@ -247,7 +293,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { useAuthStore } from '../../store/auth'
 import { useRouter } from 'vue-router'
 
@@ -255,6 +301,13 @@ const email = ref('mario@example.com')
 const password = ref('PasswordSuperSicura123!')
 const isLoading = ref(false)
 const errorMessage = ref('')
+const isRateLimited = ref(false)
+const rateLimitMessage = ref('')
+const penaltyLevel = ref(1)
+const countdownSeconds = ref(30)
+const initialCountdown = ref(30)
+let countdownTimer = null
+
 const showPassword = ref(false)
 const showRegister = ref(false)
 
@@ -273,15 +326,44 @@ const features = [
 const authStore = useAuthStore()
 const router = useRouter()
 
+const startCountdown = (seconds = 30) => {
+  if (countdownTimer) clearInterval(countdownTimer)
+  countdownSeconds.value = seconds
+  initialCountdown.value = seconds
+  isRateLimited.value = true
+
+  countdownTimer = setInterval(() => {
+    if (countdownSeconds.value > 1) {
+      countdownSeconds.value--
+    } else {
+      clearInterval(countdownTimer)
+      countdownTimer = null
+      isRateLimited.value = false
+      errorMessage.value = ''
+    }
+  }, 1000)
+}
+
+onUnmounted(() => {
+  if (countdownTimer) clearInterval(countdownTimer)
+})
+
 const handleLogin = async () => {
   isLoading.value = true
   errorMessage.value = ''
   try {
-    const success = await authStore.login(email.value, password.value)
-    if (success) {
+    const res = await authStore.login(email.value, password.value)
+    if (res.success) {
+      if (countdownTimer) clearInterval(countdownTimer)
       router.push('/')
+    } else if (res.isRateLimited) {
+      const match = res.message?.match(/(\d+)\s*second/i)
+      const sec = res.retryAfterSeconds || (match ? parseInt(match[1], 10) : 30)
+      penaltyLevel.value = res.penaltyLevel || 1
+      startCountdown(sec)
+      rateLimitMessage.value = res.message || `Troppi tentativi di login. Riprova tra ${sec} secondi.`
     } else {
-      errorMessage.value = 'Credenziali non valide. Controlla email e password.'
+      errorMessage.value = res.message || 'Credenziali non valide. Controlla email e password.'
     }
   } catch {
     errorMessage.value = 'Errore di rete. Il backend è avviato?'
@@ -298,11 +380,11 @@ const handleRegister = async () => {
   isLoading.value = true
   errorMessage.value = ''
   try {
-    const success = await authStore.register(regName.value, regEmail.value, regPassword.value, regRole.value)
-    if (success) {
+    const res = await authStore.register(regName.value, regEmail.value, regPassword.value, regRole.value)
+    if (res.success) {
       router.push('/')
     } else {
-      errorMessage.value = 'Registrazione fallita. Email già in uso?'
+      errorMessage.value = res.message || 'Registrazione fallita. Email già in uso?'
     }
   } catch {
     errorMessage.value = 'Errore di rete. Il backend è avviato?'
