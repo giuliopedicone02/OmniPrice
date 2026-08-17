@@ -39,10 +39,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # ==========================================
-# BACKEND (Spring Boot / Maven)
+# BACKEND (Spring Boot / Maven & H2 DB)
 # ==========================================
-# Ignora le build compilate di Maven
+# Ignora le build compilate di Maven e il DB H2 su file
 backend/target/
+backend/omniprice/target/
+*.mv.db
+*.trace.db
+data/
+backend/omniprice/data/
 !.mvn/wrapper/maven-wrapper.jar
 
 # ==========================================
